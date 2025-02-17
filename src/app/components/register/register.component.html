@@ -1,0 +1,41 @@
+<div class="auth-wrapper">
+    <form class="form-register" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <h3 class="h3 mb-3 font-weight-normal text-center">Register User</h3>
+
+        <!-- Errors -->
+        <div *ngIf="errors?.name" class="alert alert-danger mt-3">
+            {{ errors?.name }}
+        </div>
+        <div *ngIf="errors?.email" class="alert alert-danger mt-3">
+            {{ errors?.email }}
+        </div>
+        <div *ngIf="errors?.password" class="alert alert-danger mt-3">
+            {{ errors?.password }}
+        </div>
+        <div *ngIf="errors?.password_confirmation" class="alert alert-danger mt-3">
+            {{ errors?.password_confirmation }}
+        </div>
+
+        <!-- Signup form -->
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" formControlName="name" id="name" />
+        </div>
+        <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" class="form-control" formControlName="email" id="email" />
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" formControlName="password" id="password" />
+        </div>
+        <div class="form-group">
+            <label for="password_confirmation">Confirm Password</label>
+            <input type="password" class="form-control" formControlName="password_confirmation" id="password_confirmation" />
+        </div>
+
+        <button type="submit" class="btn btn-block btn-primary">
+            Register User
+        </button>
+    </form>
+</div>

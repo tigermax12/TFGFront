@@ -1,0 +1,89 @@
+.peticiones-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #007bff;
+}
+
+.error {
+  color: #ff4d4d;
+  font-size: 1.1rem;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.peticion-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.peticion-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.peticion-title {
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.peticion-description {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.peticion-destinatario {
+  font-size: 1.1rem;
+  color: #444;
+}
+
+.peticion-destinatario strong {
+  font-weight: bold;
+  color: #333;
+}
+
+/* Estilos para el botón "Ver Más" */
+.ver-mas-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #007bff;
+  border-radius: 5px;
+  text-decoration: none;
+  text-align: center;
+  margin-top: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.ver-mas-btn:hover {
+  background-color: #0056b3;
+}
