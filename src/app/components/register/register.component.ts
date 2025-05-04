@@ -18,12 +18,14 @@ export class RegisterComponent implements
     public fb: FormBuilder,
     public authService: AuthService
   ) {
-  this.registerForm = this.fb.group({
-    name: [''],
-    email: [''],
-    password: [''],
-    password_confirmation: [''],
-  });
+    this.registerForm = this.fb.group({
+      name: [''],
+      rol: [''],
+      email: [''],
+      numero_trabajador: [''],
+      password: [''],
+      c_password: [''],
+    });
   }
   ngOnInit() {}
   onSubmit() {

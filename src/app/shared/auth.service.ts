@@ -5,8 +5,10 @@ import { HttpClient } from '@angular/common/http';
 export class User {
   name!: string;
   email!: string;
+  rol!: string;
+  numero_trabajador!: string;
   password!: string;
-  password_confirmation!: string;
+  c_password!: string;
 }
 @Injectable({
   providedIn: 'root'
@@ -16,6 +18,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 // User registration
 register(user: User): Observable<any> {
+  console.log(user)
 return this.http.post('http://127.0.0.1:8000/api/register', user);
 }
 // Login
@@ -26,6 +29,19 @@ user);
 // Access user profile
 profileUser(): Observable<any> {
 return this.http.get('http://127.0.0.1:8000/api/me');
+}
+getUserId(): Observable<number> {
+  return new Observable(observer => {
+    this.profileUser().subscribe({
+      next: (res) => {
+        observer.next(res.id);
+        observer.complete();
+      },
+      error: (err) => {
+        observer.error(err);
+      }
+    });
+  });
 }
 
 }

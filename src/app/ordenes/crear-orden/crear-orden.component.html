@@ -1,0 +1,74 @@
+<!-- src/app/pages/crear-orden/crear-orden.component.html -->
+
+<div class="form-container">
+    <form [formGroup]="ordenForm" (ngSubmit)="submit()" class="orden-form">
+      <h2>Crear Orden de Trabajo</h2>
+  
+      <label for="tipoDeOrden">Tipo de Orden</label>
+      <select id="tipoDeOrden" formControlName="tipoDeOrden" (change)="onTipoOrdenChange()">
+        <option value="">Seleccione tipo</option>
+        <option value="limpieza">Limpieza</option>
+        <option value="trasiego">Trasiego</option>
+        <option value="clarificacion">Clarificación</option>
+      </select>
+  
+      <label for="prioridad">Prioridad</label>
+      <input type="text" id="prioridad" formControlName="prioridad" placeholder="Ej: Alta" />
+  
+      <label for="estado">Estado</label>
+      <input type="text" id="estado" formControlName="estado" placeholder="Ej: Pendiente" />
+  
+      <div formGroupName="camposTipoOrden" *ngIf="ordenForm.get('camposTipoOrden')">
+        <!-- LIMPIEZA -->
+        <div *ngIf="tipoSeleccionado === 'limpieza'">
+          <label for="limpiezaDeposito">Depósito</label>
+          <input type="text" id="limpiezaDeposito" formControlName="deposito" placeholder="Ej: D-102" />
+  
+          <label for="limpiezaTipo">Tipo de limpieza</label>
+          <input type="text" id="limpiezaTipo" formControlName="tipo_de_limpieza" placeholder="Ej: CIP" />
+  
+          <label for="limpiezaObs">Observaciones</label>
+          <textarea id="limpiezaObs" formControlName="observaciones" placeholder="Opcional"></textarea>
+        </div>
+  
+        <!-- TRASIEGO -->
+        <div *ngIf="tipoSeleccionado === 'trasiego'">
+          <label for="trasiegoProducto">Producto</label>
+          <input type="text" id="trasiegoProducto" formControlName="producto" placeholder="Ej: Vino blanco" />
+  
+          <label for="trasiegoOrigen">Depósito origen</label>
+          <input type="text" id="trasiegoOrigen" formControlName="deposito_origen" placeholder="Ej: D-101" />
+  
+          <label for="trasiegoDestino">Depósito destino</label>
+          <input type="text" id="trasiegoDestino" formControlName="deposito_destino" placeholder="Ej: D-102" />
+  
+          <label for="trasiegoCantidad">Cantidad a trasegar</label>
+          <input type="text" id="trasiegoCantidad" formControlName="cantidad_a_trasegar" placeholder="Ej: 2000 L" />
+  
+          <label for="trasiegoLimpieza">Tipo de limpieza</label>
+          <input type="text" id="trasiegoLimpieza" formControlName="tipo_de_limpieza" placeholder="Ej: Manual" />
+  
+          <label for="trasiegoObs">Observaciones</label>
+          <textarea id="trasiegoObs" formControlName="observaciones" placeholder="Opcional"></textarea>
+        </div>
+  
+        <!-- CLARIFICACIÓN -->
+        <div *ngIf="tipoSeleccionado === 'clarificacion'">
+          <label for="clarificacionProducto">Producto</label>
+          <input type="text" id="clarificacionProducto" formControlName="producto" placeholder="Ej: Mosto" />
+  
+          <label for="clarificacionDeposito">Depósito</label>
+          <input type="text" id="clarificacionDeposito" formControlName="deposito" placeholder="Ej: D-103" />
+  
+          <label for="clarificacionCoadyuvante">Coadyuvantes extra</label>
+          <input type="text" id="clarificacionCoadyuvante" formControlName="coadyuvantes_extra" placeholder="Ej: Gelatina" />
+  
+          <label for="clarificacionObs">Observaciones</label>
+          <textarea id="clarificacionObs" formControlName="observaciones" placeholder="Opcional"></textarea>
+        </div>
+      </div>
+  
+      <button type="submit" class="btn-submit">Crear orden</button>
+    </form>
+  </div>
+  

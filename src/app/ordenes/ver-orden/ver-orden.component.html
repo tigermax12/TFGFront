@@ -1,0 +1,75 @@
+<h2 class="titulo">Órdenes de Trabajo</h2>
+
+<div class="table-container">
+  <table class="tabla-ordenes">
+    <thead>
+      <tr>
+        <th>Nº de Orden</th>
+        <th>Tipo de Orden</th>
+        <th>Prioridad</th>
+        <th>Estado</th>
+        <th>Operario</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let orden of ordenesOrdenadas" [ngClass]="getRowColor(orden)">
+        <td>{{ orden.id_orden }}</td>
+        <td>
+          <span class="badge tipo-orden">{{ orden.tipo_de_orden?.toUpperCase() }}</span>
+        </td>
+        <td>
+          <span class="prioridad" [ngClass]="'prioridad-' + orden.prioridad">
+            {{ orden.prioridad }}
+          </span>
+        </td>
+        <td>
+          <span class="estado" [ngClass]="'estado-' + orden.estado?.toLowerCase()">
+            {{ orden.estado?.toUpperCase() }}
+          </span>
+        </td>
+        <td>{{ orden.nombre_operario || 'SIN ASIGNAR' }}</td>
+        <td>
+          <button class="btn-ver" (click)="abrirModal(orden.id_orden)">
+            <i class="fas fa-search" ></i> Ver más
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="modal" *ngIf="mostrarModal" (click)="onClickOutside($event)">
+  <div class="modal-contenido">
+    <h2>Detalles de la Orden</h2>
+
+    <p><strong>Tipo:</strong> {{ ordenSeleccionada?.tipo_de_orden }}</p>
+    <p><strong>Prioridad:</strong> {{ ordenSeleccionada?.prioridad }}</p>
+    <p><strong>Estado:</strong> {{ ordenSeleccionada?.estado }}</p>
+    <p><strong>Fecha creación:</strong> {{ ordenSeleccionada?.fecha_de_creacion }}</p>
+    <!-- LIMPIEZA -->
+    <div *ngIf="ordenSeleccionada?.tipo_de_orden?.trim().toLowerCase() === 'limpieza'">
+      <p><strong>Depósito:</strong> {{ ordenSeleccionada.limpieza?.deposito }}</p>
+      <p><strong>Tipo de limpieza:</strong> {{ ordenSeleccionada.limpieza?.tipo_de_limpieza }}</p>
+      <p><strong>Observaciones:</strong> {{ ordenSeleccionada.limpieza?.observaciones }}</p>
+    </div>
+    <!-- TRASIEGO -->
+    <div *ngIf="ordenSeleccionada?.tipo_de_orden?.trim().toLowerCase() === 'trasiego'">
+      <p><strong>Producto:</strong> {{ ordenSeleccionada.trasiego?.producto }}</p>
+      <p><strong>Depósito Origen:</strong> {{ ordenSeleccionada.trasiego?.deposito_origen }}</p>
+      <p><strong>Depósito Destino:</strong> {{ ordenSeleccionada.trasiego?.deposito_destino }}</p>
+      <p><strong>Cantidad a trasegar:</strong> {{ ordenSeleccionada.trasiego?.cantidad_a_trasegar }}</p>
+      <p><strong>Tipo de limpieza:</strong> {{ ordenSeleccionada.trasiego?.tipo_de_limpieza }}</p>
+      <p><strong>Observaciones:</strong> {{ ordenSeleccionada.trasiego?.observaciones }}</p>
+    </div>
+
+    <!-- CLARIFICACION -->
+    <div *ngIf="ordenSeleccionada?.tipo_de_orden?.trim().toLowerCase() === 'clarificacion'">
+      <p><strong>Producto:</strong> {{ ordenSeleccionada.clarificacion?.producto }}</p>
+      <p><strong>Depósito:</strong> {{ ordenSeleccionada.clarificacion?.deposito }}</p>
+      <p><strong>Coadyuvantes extra:</strong> {{ ordenSeleccionada.clarificacion?.coadyuvantes_extra }}</p>
+      <p><strong>Observaciones:</strong> {{ ordenSeleccionada.clarificacion?.observaciones }}</p>
+    </div>
+    <button (click)="cerrarModal()">Cerrar</button>
+  </div>
+</div>

@@ -334,19 +334,15 @@
 
   <!-- Botones que se muestran si el usuario ESTÁ logeado -->
   <a *ngIf="isSignedIn" class="btn btn-primary me-3" routerLink="/profile">Profile</a>
-  <a *ngIf="isSignedIn" class="btn btn-primary me-3" routerLink="/create">Crear Petición</a>
-  <a *ngIf="isSignedIn" class="btn btn-primary me-3" routerLink="/index">Listar Peticiones</a>
+  <!--<a *ngIf="isSignedIn" class="btn btn-primary me-3" routerLink="/index">Listar Peticiones</a>-->
   <a *ngIf="isSignedIn" class="btn btn-danger me-3" (click)="signOut()">Sign out</a>
+  <a *ngIf="isSignedIn" routerLink="/ver-ordenes" class="nav-link btn btn-outline-primary">
+    Ver Órdenes
+  </a>
 </div>
 
 <div class="content" role="main">
-  <div class="card highlight-card card-small">
-    <svg id="rocket" xmlns="http://www.w3.org/2000/svg" width="101.678" height="101.678" viewBox="0 0 101.678 101.678">
-      <title>Rocket Ship</title>
-      <!-- El contenido SVG aquí... -->
-    </svg>
-    <span>{{ title }} app is running!</span>
-  </div>
+  
 
   <router-outlet></router-outlet>
 </div>

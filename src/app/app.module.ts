@@ -11,15 +11,16 @@ import { RouterModule } from '@angular/router';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './shared/auth-interceptor.service';
 import { ReactiveFormsModule } from '@angular/forms';
-import { PeticionModule } from './peticion/peticion.module';
-import { PeticionRoutingModule } from './peticion/peticion-routing.module';
-import { PeticionService } from './peticion/peticion.service';
+import { CrearOrdenComponent } from './ordenes/crear-orden/crear-orden.component';
+import { VerOrdenComponent } from './ordenes/ver-orden/ver-orden.component';
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     RegisterComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    CrearOrdenComponent,
+    VerOrdenComponent
   ],
   imports: [
     BrowserModule,
@@ -29,8 +30,6 @@ import { PeticionService } from './peticion/peticion.service';
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
-    PeticionModule,
-    PeticionRoutingModule,
   ],
   providers: [
     {
@@ -38,7 +37,6 @@ import { PeticionService } from './peticion/peticion.service';
       useClass: AuthInterceptor,
       multi: true
     },
-    PeticionService
   ],
   bootstrap: [AppComponent]
 })
