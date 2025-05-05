@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-
+import { Router } from '@angular/router';
+import { AuthStateService } from './auth-state.service';
+import { TokenService } from './token.service';
 export class User {
+  id!: number;
   name!: string;
   email!: string;
   rol!: string;
@@ -15,7 +18,13 @@ export class User {
 })
 export class AuthService {
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authState: AuthStateService,
+    private token: TokenService,
+    private router: Router
+  
+  ) {}
 // User registration
 register(user: User): Observable<any> {
   console.log(user)
@@ -43,5 +52,12 @@ getUserId(): Observable<number> {
     });
   });
 }
-
+getAllUsers(): Observable<User[]> {
+  return this.http.get<User[]>('http://127.0.0.1:8000/api/index');
+}
+signOut() {
+  this.token.removeToken();
+  this.authState.setAuthState(false);
+  this.router.navigate(['/login']);
+}
 }

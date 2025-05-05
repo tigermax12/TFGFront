@@ -13,6 +13,8 @@ import { AuthStateService } from '../../shared/auth-state.service';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   errors: any = null;
+  hidePassword: boolean = true;
+
   constructor(
     public router: Router,
     public fb: FormBuilder,

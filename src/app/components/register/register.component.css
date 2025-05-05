@@ -1,0 +1,29 @@
+.auth-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+  }
+  
+  .register-form {
+    width: 100%;
+    max-width: 500px;
+    padding: 2rem;
+    border-radius: 12px;
+    background-color: #fafafa;
+  }
+  
+  .form-title {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .full-width {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .submit-button {
+    width: 100%;
+    margin-top: 1rem;
+  }
+  

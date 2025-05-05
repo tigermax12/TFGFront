@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from 'src/app/shared/auth.service'; 
 import { environment } from 'src/environments/environment'; 
-
+import { OrdenService } from '../orden.service';
 @Component({
   selector: 'app-ver-orden',
   templateUrl: './ver-orden.component.html',
@@ -16,6 +16,7 @@ export class VerOrdenComponent implements OnInit {
   mostrarModal: boolean = false;
   detallesKeys: string[] = [];
   constructor(
+    private ordenService: OrdenService,
     private http: HttpClient,
     private auth: AuthService
   ) {}
@@ -25,9 +26,9 @@ export class VerOrdenComponent implements OnInit {
   }
 
   cargarOrdenes() {
-    this.http.get(`${environment.apiUrl}/ordendetrabajo`)
+    this.ordenService.listarOrdenes()
       .subscribe((data: any) => {
-        this.ordenes = data; // Ya que devuelve un array directo
+        this.ordenes = data;
         console.log('Órdenes recibidas:', this.ordenes);
       });
   }

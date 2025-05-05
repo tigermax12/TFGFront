@@ -1,0 +1,22 @@
+.table-container {
+  position: relative;
+  width: 100%;
+  padding-right: 360px;
+}
+
+.full-width-table {
+  width: 100%;
+}
+
+.floating-card {
+  position: absolute;
+  top: 120px; 
+  right: 0;
+  width: 320px;
+  margin: 16px;
+}
+
+
+:host ::ng-deep .mat-sidenav-content {
+  max-width: none !important;
+}

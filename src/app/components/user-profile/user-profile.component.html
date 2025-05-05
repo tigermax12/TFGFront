@@ -1,13 +1,14 @@
-<div class="container">
-    <div class="card inner-main">
-    <div class="card-header">
-    User Profile
-    </div>
-    <div class="card-body">
-    <p class="card-text">Name:
-    <strong>{{UserProfile?.name}}</strong></p>
-    <p class="card-text">Email:
-    <strong>{{UserProfile?.email}}</strong></p>
-    </div>
-    </div>
-    </div>
+<mat-card class="user-profile-card">
+  <mat-card-header>
+    <mat-card-title class="card-title">User Profile</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content class="card-content">
+    <p><strong>Name:</strong> {{ UserProfile.name }}</p>
+    <p><strong>Email:</strong> {{ UserProfile.email }}</p>
+  </mat-card-content>
+
+  <mat-card-actions class="card-actions">
+    <button mat-raised-button color="warn" (click)="onSignOut()">Sign Out</button>
+  </mat-card-actions>
+</mat-card>

@@ -13,6 +13,8 @@ export class RegisterComponent implements
   OnInit {
   registerForm: FormGroup;
   errors: any = null;
+  hidePassword = true;
+  hideConfirm = true; 
   constructor(
     public router: Router,
     public fb: FormBuilder,

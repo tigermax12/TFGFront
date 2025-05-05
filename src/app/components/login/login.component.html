@@ -1,27 +1,38 @@
 <div class="auth-wrapper">
-    <form class="form-login" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <h3 class="h3 mb-3 font-weight-normal text-center">Login</h3>
-
-        <!-- Errors -->
-        <div *ngIf="errors?.email" class="alert alert-danger mt-3">
-            {{ errors?.email }}
-        </div>
-        <div *ngIf="errors?.password" class="alert alert-danger mt-3">
-            {{ errors?.password }}
-        </div>
-
-        <!-- Login form -->
-        <div class="form-group">
-            <label for="email">Email address</label>
-            <input type="email" class="form-control" formControlName="email" id="email" />
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" formControlName="password" id="password" />
-        </div>
-
-        <button type="submit" class="btn btn-block btn-primary">
-            Login
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form-login">
+      <h2 class="form-title">Iniciar Sesión</h2>
+  
+      <!-- Mensajes de error -->
+      <div *ngIf="errors?.email" class="alert alert-danger mt-3">
+        {{ errors?.email }}
+      </div>
+      <div *ngIf="errors?.password" class="alert alert-danger mt-3">
+        {{ errors?.password }}
+      </div>
+  
+      <!-- Campo email -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="correo@ejemplo.com" />
+      </mat-form-field>
+  
+      <!-- Campo contraseña -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Contraseña</mat-label>
+        <input
+          matInput
+          [type]="hidePassword ? 'password' : 'text'"
+          formControlName="password"
+          placeholder="Introduce tu contraseña"
+        />
+        <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
         </button>
+      </mat-form-field>
+  
+      <button mat-raised-button color="primary" class="full-width" type="submit">
+        Iniciar Sesión
+      </button>
     </form>
-</div>
+  </div>
+  

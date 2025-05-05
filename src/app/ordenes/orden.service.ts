@@ -16,7 +16,7 @@ export class OrdenService {
   }
 
   listarOrdenes() {
-    return this.http.get<OrdenDeTrabajo[]>(this.apiUrl);
+    return this.http.get(`${this.apiUrl}`);
   }
 
   asignarOrden(id: number, firma: string) {
