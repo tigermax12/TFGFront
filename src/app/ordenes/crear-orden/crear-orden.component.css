@@ -1,56 +1,27 @@
-/* src/app/pages/crear-orden/crear-orden.component.css */
+.orden-form {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+  background-color: #fff;
+  border-radius: 8px;
+}
 
-.form-container {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: #f9f9f9;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+.form-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+
+.full-width {
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
   }
-  
-  .orden-form {
-    display: flex;
-    flex-direction: column;
+
+  .form-grid > .full-width {
+    grid-column: span 2;
   }
-  
-  .orden-form h2 {
-    margin-bottom: 1.5rem;
-    color: #333;
-  }
-  
-  .orden-form label {
-    font-weight: bold;
-    margin-top: 1rem;
-  }
-  
-  .orden-form input,
-  .orden-form select,
-  .orden-form textarea {
-    padding: 0.5rem;
-    margin-top: 0.3rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 1rem;
-  }
-  
-  .orden-form textarea {
-    min-height: 80px;
-  }
-  
-  .btn-submit {
-    margin-top: 2rem;
-    padding: 0.75rem;
-    background-color: #1976d2;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .btn-submit:hover {
-    background-color: #115293;
-  }
-  
+}

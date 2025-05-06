@@ -31,17 +31,17 @@ export class RegisterComponent implements
   }
   ngOnInit() {}
   onSubmit() {
-  this.authService.register(this.registerForm.value).subscribe(
-  (result) => {
-  console.log(result);
-  },
-  (error) => {
-  this.errors = error.error;
-  },
-  () => {
-  this.registerForm.reset();
-  this.router.navigate(['login']);
-  }
-  );
+    this.authService.register(this.registerForm.value).subscribe(
+      (result) => {
+        console.log(result);
+      },
+      (error) => {
+        this.errors = error.error;
+      },
+      () => {
+        this.registerForm.reset();
+        this.router.navigate(['users']);
+      }
+    );
   }
 }

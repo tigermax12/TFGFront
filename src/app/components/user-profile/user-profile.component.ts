@@ -17,6 +17,7 @@ export class UserProfileComponent implements OnInit {
     constructor(public authService: AuthService, private router: Router) {
         this.authService.profileUser().subscribe((data: any) => {
           this.UserProfile = data;
+          console.log(this.UserProfile);
         });
       }
     

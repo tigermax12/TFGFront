@@ -15,6 +15,9 @@ export class VerOrdenComponent implements OnInit {
   tipoSeleccionado: string = '';
   mostrarModal: boolean = false;
   detallesKeys: string[] = [];
+  usuarioSeleccionado: number | null = null;
+  contrasenaIngresada: string = '';
+  listaUsuarios: any[] = [];
   constructor(
     private ordenService: OrdenService,
     private http: HttpClient,
@@ -23,6 +26,12 @@ export class VerOrdenComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarOrdenes();
+    this.auth.getAllUsers().subscribe({
+      next: (data) => {
+        this.listaUsuarios = data;
+      },
+      error: (err) => console.error('Error al cargar usuarios', err)
+    });
   }
 
   cargarOrdenes() {
@@ -33,16 +42,6 @@ export class VerOrdenComponent implements OnInit {
       });
   }
 
-  asignarOrden(ordenId: number) {
-    const userId = this.auth.getUserId();
-    this.http.post(`${environment.apiUrl}/ordendetrabajo/asignar`, {
-      ordenId,
-      operario: userId,
-      firma: 'Firma del operario'
-    }).subscribe(() => {
-      this.cargarOrdenes();
-    });
-  }
   getRowColor(orden: any): string {
     if (orden.estado?.toLowerCase() === 'pendiente') {
       return 'tr-roja';
@@ -85,4 +84,48 @@ export class VerOrdenComponent implements OnInit {
       this.cerrarModal();
     }
   }
+  validarYAsignar() {
+    const payload = {
+      userId: this.usuarioSeleccionado,
+      password: this.contrasenaIngresada,
+      ordenId: this.ordenSeleccionada.id_orden
+    };
+  
+    this.http.post(`${environment.apiUrl}/ordendetrabajo/autoasignar`, {
+      user_id: this.usuarioSeleccionado,        // Debe ser un ID válido
+      password: this.contrasenaIngresada,       // No puede estar vacío
+      orden_id: this.ordenSeleccionada?.id_orden  // Debe existir en la DB
+    }).subscribe({
+      next: (res) => {
+        console.log('Asignación exitosa', res);
+        this.cargarOrdenes();
+        this.cerrarModal();
+      },
+      error: (err) => {
+        console.error('Error al asignar la orden', err);
+        alert('Error al asignar la orden. Verifica usuario y contraseña.');
+      }
+    });
+  }
+
+  guardarCambios(tipo: 'limpieza' | 'trasiego' | 'clarificacion') {
+    if (!this.ordenSeleccionada || !this.ordenSeleccionada.id_orden) return;
+  
+    const id = this.ordenSeleccionada.id_orden;
+    const datos = {
+      tipo_de_orden: tipo,
+      ...this.ordenSeleccionada[tipo]
+    };
+  
+    this.http.post(`http://localhost:8000/api/ordendetrabajo/actualizar-orden/${id}`, datos).subscribe({
+      next: () => {
+        alert(`Datos de ${tipo} actualizados correctamente.`);
+      },
+      error: (error) => {
+        console.error(error);
+        alert(`Error al guardar los cambios de ${tipo}.`);
+      }
+    });
+  }
+  
 }

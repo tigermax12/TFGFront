@@ -47,29 +47,137 @@
     <p><strong>Prioridad:</strong> {{ ordenSeleccionada?.prioridad }}</p>
     <p><strong>Estado:</strong> {{ ordenSeleccionada?.estado }}</p>
     <p><strong>Fecha creación:</strong> {{ ordenSeleccionada?.fecha_de_creacion }}</p>
+    
+    <!-- Autoasignación accesible -->
+    <div *ngIf="ordenSeleccionada?.estado === 'pendiente' && !ordenSeleccionada?.nombre_operario">
+      <h3>Autoasignarse esta orden</h3>
+
+      <label for="usuario-select">Selecciona tu usuario:</label>
+      <select id="usuario-select" [(ngModel)]="usuarioSeleccionado" name="usuario" title="Selecciona tu usuario">
+        <option value="" disabled selected>-- Selecciona --</option>
+        <option *ngFor="let user of listaUsuarios" [value]="user.id">
+          {{ user.name }} - {{ user.numero_trabajador }}
+        </option>
+      </select>
+
+      <label for="password-input">Contraseña:</label>
+      <input
+        id="password-input"
+        type="password"
+        [(ngModel)]="contrasenaIngresada"
+        name="password"
+        placeholder="Introduce tu contraseña"
+        title="Introduce tu contraseña"
+      />
+      <button (click)="validarYAsignar()">Asignarme esta orden</button>
+    </div>
+
     <!-- LIMPIEZA -->
     <div *ngIf="ordenSeleccionada?.tipo_de_orden?.trim().toLowerCase() === 'limpieza'">
-      <p><strong>Depósito:</strong> {{ ordenSeleccionada.limpieza?.deposito }}</p>
-      <p><strong>Tipo de limpieza:</strong> {{ ordenSeleccionada.limpieza?.tipo_de_limpieza }}</p>
-      <p><strong>Observaciones:</strong> {{ ordenSeleccionada.limpieza?.observaciones }}</p>
+      <div *ngIf="ordenSeleccionada?.estado == 'asignado' && ordenSeleccionada?.limpieza.operario; else verLimpieza">
+        <label for="deposito">Depósito:</label>
+        <input id="deposito" name="deposito" type="text"
+               [(ngModel)]="ordenSeleccionada.limpieza.deposito"
+               placeholder="Introduce el depósito" title="Campo de depósito" />
+    
+        <label for="tipoLimpieza">Tipo de limpieza:</label>
+        <input id="tipoLimpieza" name="tipoLimpieza" type="text"
+               [(ngModel)]="ordenSeleccionada.limpieza.tipo_de_limpieza"
+               placeholder="Tipo de limpieza realizada" title="Tipo de limpieza" />
+    
+        <label for="observacionesLimpieza">Observaciones:</label>
+        <textarea id="observacionesLimpieza" name="observacionesLimpieza"
+                  [(ngModel)]="ordenSeleccionada.limpieza.observaciones"
+                  placeholder="Observaciones sobre la limpieza"
+                  title="Observaciones de limpieza"></textarea>
+    
+          <button (click)="guardarCambios('limpieza')">Guardar cambios</button>
+      </div>
+      <ng-template #verLimpieza>
+        <p><strong>Depósito:</strong> {{ ordenSeleccionada.limpieza?.deposito }}</p>
+        <p><strong>Tipo de limpieza:</strong> {{ ordenSeleccionada.limpieza?.tipo_de_limpieza }}</p>
+        <p><strong>Observaciones:</strong> {{ ordenSeleccionada.limpieza?.observaciones }}</p>
+      </ng-template>
     </div>
+    
     <!-- TRASIEGO -->
     <div *ngIf="ordenSeleccionada?.tipo_de_orden?.trim().toLowerCase() === 'trasiego'">
-      <p><strong>Producto:</strong> {{ ordenSeleccionada.trasiego?.producto }}</p>
-      <p><strong>Depósito Origen:</strong> {{ ordenSeleccionada.trasiego?.deposito_origen }}</p>
-      <p><strong>Depósito Destino:</strong> {{ ordenSeleccionada.trasiego?.deposito_destino }}</p>
-      <p><strong>Cantidad a trasegar:</strong> {{ ordenSeleccionada.trasiego?.cantidad_a_trasegar }}</p>
-      <p><strong>Tipo de limpieza:</strong> {{ ordenSeleccionada.trasiego?.tipo_de_limpieza }}</p>
-      <p><strong>Observaciones:</strong> {{ ordenSeleccionada.trasiego?.observaciones }}</p>
+      <div *ngIf="ordenSeleccionada?.estado !== 'pendiente' && ordenSeleccionada?.trasiego.operario; else verTrasiego">
+        <label for="productoTrasiego">Producto:</label>
+        <input id="productoTrasiego" name="productoTrasiego" type="text"
+               [(ngModel)]="ordenSeleccionada.trasiego.producto"
+               placeholder="Nombre del producto" title="Producto a trasegar" />
+    
+        <label for="depositoOrigen">Depósito Origen:</label>
+        <input id="depositoOrigen" name="depositoOrigen" type="text"
+               [(ngModel)]="ordenSeleccionada.trasiego.deposito_origen"
+               placeholder="Depósito de origen" title="Depósito de origen" />
+    
+        <label for="depositoDestino">Depósito Destino:</label>
+        <input id="depositoDestino" name="depositoDestino" type="text"
+               [(ngModel)]="ordenSeleccionada.trasiego.deposito_destino"
+               placeholder="Depósito destino" title="Depósito destino" />
+    
+        <label for="cantidad">Cantidad a trasegar:</label>
+        <input id="cantidad" name="cantidad" type="text"
+               [(ngModel)]="ordenSeleccionada.trasiego.cantidad_a_trasegar"
+               placeholder="Cantidad" title="Cantidad a trasegar" />
+    
+        <label for="tipoLimpiezaTrasiego">Tipo de limpieza:</label>
+        <input id="tipoLimpiezaTrasiego" name="tipoLimpiezaTrasiego" type="text"
+               [(ngModel)]="ordenSeleccionada.trasiego.tipo_de_limpieza"
+               placeholder="Tipo de limpieza" title="Tipo de limpieza" />
+    
+        <label for="observacionesTrasiego">Observaciones:</label>
+        <textarea id="observacionesTrasiego" name="observacionesTrasiego"
+                  [(ngModel)]="ordenSeleccionada.trasiego.observaciones"
+                  placeholder="Observaciones del trasiego"
+                  title="Observaciones del trasiego"></textarea>
+    
+          <button (click)="guardarCambios('trasiego')">Guardar cambios</button>
+      </div>
+      <ng-template #verTrasiego>
+        <p><strong>Producto:</strong> {{ ordenSeleccionada.trasiego?.producto }}</p>
+        <p><strong>Depósito Origen:</strong> {{ ordenSeleccionada.trasiego?.deposito_origen }}</p>
+        <p><strong>Depósito Destino:</strong> {{ ordenSeleccionada.trasiego?.deposito_destino }}</p>
+        <p><strong>Cantidad a trasegar:</strong> {{ ordenSeleccionada.trasiego?.cantidad_a_trasegar }}</p>
+        <p><strong>Tipo de limpieza:</strong> {{ ordenSeleccionada.trasiego?.tipo_de_limpieza }}</p>
+        <p><strong>Observaciones:</strong> {{ ordenSeleccionada.trasiego?.observaciones }}</p>
+      </ng-template>
     </div>
 
     <!-- CLARIFICACION -->
     <div *ngIf="ordenSeleccionada?.tipo_de_orden?.trim().toLowerCase() === 'clarificacion'">
-      <p><strong>Producto:</strong> {{ ordenSeleccionada.clarificacion?.producto }}</p>
-      <p><strong>Depósito:</strong> {{ ordenSeleccionada.clarificacion?.deposito }}</p>
-      <p><strong>Coadyuvantes extra:</strong> {{ ordenSeleccionada.clarificacion?.coadyuvantes_extra }}</p>
-      <p><strong>Observaciones:</strong> {{ ordenSeleccionada.clarificacion?.observaciones }}</p>
+      <div *ngIf="ordenSeleccionada?.estado !== 'pendiente' && ordenSeleccionada?.clarificacion.operario; else verClarificacion">
+        <label for="productoClarificacion">Producto:</label>
+        <input id="productoClarificacion" name="productoClarificacion" type="text"
+               [(ngModel)]="ordenSeleccionada.clarificacion.producto"
+               placeholder="Producto clarificado" title="Producto clarificado" />
+    
+        <label for="depositoClarificacion">Depósito:</label>
+        <input id="depositoClarificacion" name="depositoClarificacion" type="text"
+               [(ngModel)]="ordenSeleccionada.clarificacion.deposito"
+               placeholder="Depósito" title="Depósito clarificación" />
+    
+        <label for="coadyuvantes">Coadyuvantes extra:</label>
+        <input id="coadyuvantes" name="coadyuvantes" type="text"
+               [(ngModel)]="ordenSeleccionada.clarificacion.coadyuvantes_extra"
+               placeholder="Coadyuvantes" title="Coadyuvantes extra" />
+    
+        <label for="observacionesClarificacion">Observaciones:</label>
+        <textarea id="observacionesClarificacion" name="observacionesClarificacion"
+                  [(ngModel)]="ordenSeleccionada.clarificacion.observaciones"
+                  placeholder="Observaciones"
+                  title="Observaciones clarificación"></textarea>
+    
+         <button (click)="guardarCambios('clarificacion')">Guardar cambios</button>
+      </div>
+      <ng-template #verClarificacion>
+        <p><strong>Producto:</strong> {{ ordenSeleccionada.clarificacion?.producto }}</p>
+        <p><strong>Depósito:</strong> {{ ordenSeleccionada.clarificacion?.deposito }}</p>
+        <p><strong>Coadyuvantes extra:</strong> {{ ordenSeleccionada.clarificacion?.coadyuvantes_extra }}</p>
+        <p><strong>Observaciones:</strong> {{ ordenSeleccionada.clarificacion?.observaciones }}</p>
+      </ng-template>
     </div>
-    <button (click)="cerrarModal()">Cerrar</button>
-  </div>
+    
 </div>
