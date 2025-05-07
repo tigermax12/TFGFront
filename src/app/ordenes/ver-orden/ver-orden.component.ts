@@ -1,15 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from 'src/app/shared/auth.service'; 
 import { environment } from 'src/environments/environment'; 
 import { OrdenService } from '../orden.service';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+
 @Component({
   selector: 'app-ver-orden',
   templateUrl: './ver-orden.component.html',
   styleUrls: ['./ver-orden.component.css']
 })
-export class VerOrdenComponent implements OnInit {
+export class VerOrdenComponent implements OnInit, AfterViewInit {
   ordenes: any[] = [];
+  dataSource = new MatTableDataSource<any>([]);
+  displayedColumns: string[] = [
+    'id_orden',
+    'tipo_de_orden',
+    'prioridad',
+    'estado',
+    'nombre_operario',
+    'acciones'
+  ];
+
   ordenSeleccionada: any = null;
   detallesOrden: any = null;
   tipoSeleccionado: string = '';
@@ -18,6 +31,9 @@ export class VerOrdenComponent implements OnInit {
   usuarioSeleccionado: number | null = null;
   contrasenaIngresada: string = '';
   listaUsuarios: any[] = [];
+  mostrarModalFinalizar: boolean = false;
+  @ViewChild(MatSort) sort!: MatSort;
+
   constructor(
     private ordenService: OrdenService,
     private http: HttpClient,
@@ -34,13 +50,19 @@ export class VerOrdenComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit(): void {
+    this.dataSource.sort = this.sort;
+  }
+
   cargarOrdenes() {
     this.ordenService.listarOrdenes()
       .subscribe((data: any) => {
         this.ordenes = data;
-        console.log('Órdenes recibidas:', this.ordenes);
+        this.dataSource.data = data;
       });
   }
+
+  
 
   getRowColor(orden: any): string {
     if (orden.estado?.toLowerCase() === 'pendiente') {
@@ -50,17 +72,7 @@ export class VerOrdenComponent implements OnInit {
     }
     return '';
   }
-  get ordenesOrdenadas() {
-    return this.ordenes.sort((a, b) => {
-      if (a.estado?.toUpperCase() === 'EN PROCESO' && b.estado?.toUpperCase() !== 'EN PROCESO') {
-        return -1;
-      }
-      if (a.estado?.toUpperCase() !== 'EN PROCESO' && b.estado?.toUpperCase() === 'EN PROCESO') {
-        return 1;
-      }
-      return b.prioridad - a.prioridad;
-    });
-  }
+
   abrirModal(id: number) {
     this.http.get(`${environment.apiUrl}/ordendetrabajo/${id}/completa`)
       .subscribe((res: any) => {
@@ -71,6 +83,7 @@ export class VerOrdenComponent implements OnInit {
         this.mostrarModal = true;
       });
   }
+
   cerrarModal() {
     this.mostrarModal = false;
     this.ordenSeleccionada = null;
@@ -78,23 +91,18 @@ export class VerOrdenComponent implements OnInit {
     this.tipoSeleccionado = '';
     this.detallesKeys = [];
   }
+
   onClickOutside(event: MouseEvent) {
-    // Cierra el modal solo si se hizo clic directamente en el fondo (no en el contenido)
     if ((event.target as HTMLElement).classList.contains('modal')) {
       this.cerrarModal();
     }
   }
+
   validarYAsignar() {
-    const payload = {
-      userId: this.usuarioSeleccionado,
-      password: this.contrasenaIngresada,
-      ordenId: this.ordenSeleccionada.id_orden
-    };
-  
     this.http.post(`${environment.apiUrl}/ordendetrabajo/autoasignar`, {
-      user_id: this.usuarioSeleccionado,        // Debe ser un ID válido
-      password: this.contrasenaIngresada,       // No puede estar vacío
-      orden_id: this.ordenSeleccionada?.id_orden  // Debe existir en la DB
+      user_id: this.usuarioSeleccionado,
+      password: this.contrasenaIngresada,
+      orden_id: this.ordenSeleccionada?.id_orden
     }).subscribe({
       next: (res) => {
         console.log('Asignación exitosa', res);
@@ -112,20 +120,44 @@ export class VerOrdenComponent implements OnInit {
     if (!this.ordenSeleccionada || !this.ordenSeleccionada.id_orden) return;
   
     const id = this.ordenSeleccionada.id_orden;
-    const datos = {
-      tipo_de_orden: tipo,
-      ...this.ordenSeleccionada[tipo]
-    };
+    const datos = this.ordenSeleccionada[tipo];
   
-    this.http.post(`http://localhost:8000/api/ordendetrabajo/actualizar-orden/${id}`, datos).subscribe({
-      next: () => {
-        alert(`Datos de ${tipo} actualizados correctamente.`);
-      },
+    this.ordenService.actualizarOrden(id, tipo, datos).subscribe({
+      next: () => alert(`Datos de ${tipo} actualizados correctamente.`),
       error: (error) => {
         console.error(error);
         alert(`Error al guardar los cambios de ${tipo}.`);
       }
     });
   }
+  abrirFinalizarModal() {
+    this.mostrarModalFinalizar = true;
+  }
   
+  cerrarFinalizarModal() {
+    this.mostrarModalFinalizar = false;
+  }
+  finalizarOrden() {
+    if (!this.ordenSeleccionada?.id_orden) return;
+  
+    this.ordenService.finalizarOrden(this.ordenSeleccionada.id_orden).subscribe({
+      next: () => {
+        // ⚙️ Actualizar estado localmente
+        this.ordenSeleccionada.estado = 'finalizado';
+  
+        // 🧼 Resetear vista como si estuviera en estado "pendiente"
+        this.mostrarModalFinalizar = false;
+  
+        alert('Orden finalizada correctamente.');
+  
+        // Esto fuerza que la vista se actualice como si fuera "pendiente"
+        // por ejemplo: sin edición habilitada, solo vista
+      },
+      error: (err) => {
+        console.error('Error al finalizar la orden', err);
+        alert('Hubo un error al finalizar la orden.');
+      }
+    });
+  }
+
 }

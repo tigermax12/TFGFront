@@ -198,7 +198,7 @@
 }
 
 /* Botón de cerrar */
-.modal-contenido button {
+/*.modal-contenido button {
   background-color: #3498db;
   color: white;
   border: none;
@@ -208,7 +208,7 @@
   font-size: 1rem;
   margin-top: 1.5rem;
   transition: background-color 0.3s;
-}
+}*/
 
 .modal-contenido button:hover {
   background-color: #2980b9;
@@ -252,5 +252,16 @@
     min-width: 120px;
     display: block;
     margin-bottom: 0.2rem;
+  }
+}
+.form-field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+  .modal-contenido {
+    max-width: 800px; /* Antes: 700px */
+    padding: 2.5rem;   /* Más espacio interior */
   }
 }

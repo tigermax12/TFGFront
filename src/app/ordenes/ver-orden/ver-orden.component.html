@@ -1,43 +1,65 @@
 <h2 class="titulo">Órdenes de Trabajo</h2>
 
-<div class="table-container">
-  <table class="tabla-ordenes">
-    <thead>
-      <tr>
-        <th>Nº de Orden</th>
-        <th>Tipo de Orden</th>
-        <th>Prioridad</th>
-        <th>Estado</th>
-        <th>Operario</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let orden of ordenesOrdenadas" [ngClass]="getRowColor(orden)">
-        <td>{{ orden.id_orden }}</td>
-        <td>
-          <span class="badge tipo-orden">{{ orden.tipo_de_orden?.toUpperCase() }}</span>
-        </td>
-        <td>
-          <span class="prioridad" [ngClass]="'prioridad-' + orden.prioridad">
-            {{ orden.prioridad }}
-          </span>
-        </td>
-        <td>
-          <span class="estado" [ngClass]="'estado-' + orden.estado?.toLowerCase()">
-            {{ orden.estado?.toUpperCase() }}
-          </span>
-        </td>
-        <td>{{ orden.nombre_operario || 'SIN ASIGNAR' }}</td>
-        <td>
-          <button class="btn-ver" (click)="abrirModal(orden.id_orden)">
-            <i class="fas fa-search" ></i> Ver más
-          </button>
-        </td>
-      </tr>
-    </tbody>
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort class="mat-table">
+
+    <!-- Nº de Orden -->
+    <ng-container matColumnDef="id_orden">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nº de Orden</th>
+      <td mat-cell *matCellDef="let orden">{{ orden.id_orden }}</td>
+    </ng-container>
+
+    <!-- Tipo de Orden -->
+    <ng-container matColumnDef="tipo_de_orden">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Orden</th>
+      <td mat-cell *matCellDef="let orden">
+        <span class="badge tipo-orden">{{ orden.tipo_de_orden?.toUpperCase() }}</span>
+      </td>
+    </ng-container>
+
+    <!-- Prioridad -->
+    <ng-container matColumnDef="prioridad">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Prioridad</th>
+      <td mat-cell *matCellDef="let orden">
+        <span class="prioridad" [ngClass]="'prioridad-' + orden.prioridad">
+          {{ orden.prioridad }}
+        </span>
+      </td>
+    </ng-container>
+
+    <!-- Estado -->
+    <ng-container matColumnDef="estado">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
+      <td mat-cell *matCellDef="let orden">
+        <span class="estado" [ngClass]="'estado-' + orden.estado?.toLowerCase()">
+          {{ orden.estado?.toUpperCase() }}
+        </span>
+      </td>
+    </ng-container>
+
+    <!-- Operario -->
+    <ng-container matColumnDef="nombre_operario">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Operario</th>
+      <td mat-cell *matCellDef="let orden">{{ orden.nombre_operario || 'SIN ASIGNAR' }}</td>
+    </ng-container>
+
+    <!-- Acciones -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef>Acciones</th>
+      <td mat-cell *matCellDef="let orden">
+        <button mat-button color="primary" (click)="abrirModal(orden.id_orden)">
+          <mat-icon>search</mat-icon> Ver más
+        </button>
+      </td>
+    </ng-container>
+
+    <!-- Header y Rows -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="getRowColor(row)"></tr>
+
   </table>
 </div>
+
 
 <div class="modal" *ngIf="mostrarModal" (click)="onClickOutside($event)">
   <div class="modal-contenido">
@@ -74,25 +96,34 @@
 
     <!-- LIMPIEZA -->
     <div *ngIf="ordenSeleccionada?.tipo_de_orden?.trim().toLowerCase() === 'limpieza'">
-      <div *ngIf="ordenSeleccionada?.estado == 'asignado' && ordenSeleccionada?.limpieza.operario; else verLimpieza">
-        <label for="deposito">Depósito:</label>
-        <input id="deposito" name="deposito" type="text"
-               [(ngModel)]="ordenSeleccionada.limpieza.deposito"
-               placeholder="Introduce el depósito" title="Campo de depósito" />
+      <div *ngIf="ordenSeleccionada?.estado === 'asignado' && ordenSeleccionada?.limpieza?.operario; else verLimpieza">
+        
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Depósito</mat-label>
+          <input matInput [(ngModel)]="ordenSeleccionada.limpieza.deposito" placeholder="Introduce el depósito" />
+        </mat-form-field>
     
-        <label for="tipoLimpieza">Tipo de limpieza:</label>
-        <input id="tipoLimpieza" name="tipoLimpieza" type="text"
-               [(ngModel)]="ordenSeleccionada.limpieza.tipo_de_limpieza"
-               placeholder="Tipo de limpieza realizada" title="Tipo de limpieza" />
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Tipo de limpieza</mat-label>
+          <input matInput [(ngModel)]="ordenSeleccionada.limpieza.tipo_de_limpieza" placeholder="Tipo de limpieza" />
+        </mat-form-field>
     
-        <label for="observacionesLimpieza">Observaciones:</label>
-        <textarea id="observacionesLimpieza" name="observacionesLimpieza"
-                  [(ngModel)]="ordenSeleccionada.limpieza.observaciones"
-                  placeholder="Observaciones sobre la limpieza"
-                  title="Observaciones de limpieza"></textarea>
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Observaciones</mat-label>
+          <textarea matInput [(ngModel)]="ordenSeleccionada.limpieza.observaciones" placeholder="Observaciones"></textarea>
+        </mat-form-field>
     
-          <button (click)="guardarCambios('limpieza')">Guardar cambios</button>
+        <button mat-raised-button color="primary" (click)="guardarCambios('limpieza')">Guardar cambios</button>
+        <button
+        *ngIf="ordenSeleccionada?.estado === 'asignado'"
+        mat-raised-button
+        color="accent"
+        (click)="abrirFinalizarModal()"
+      >
+        Finalizar orden
+      </button>
       </div>
+    
       <ng-template #verLimpieza>
         <p><strong>Depósito:</strong> {{ ordenSeleccionada.limpieza?.deposito }}</p>
         <p><strong>Tipo de limpieza:</strong> {{ ordenSeleccionada.limpieza?.tipo_de_limpieza }}</p>
@@ -100,42 +131,52 @@
       </ng-template>
     </div>
     
+    
     <!-- TRASIEGO -->
     <div *ngIf="ordenSeleccionada?.tipo_de_orden?.trim().toLowerCase() === 'trasiego'">
-      <div *ngIf="ordenSeleccionada?.estado !== 'pendiente' && ordenSeleccionada?.trasiego.operario; else verTrasiego">
-        <label for="productoTrasiego">Producto:</label>
-        <input id="productoTrasiego" name="productoTrasiego" type="text"
-               [(ngModel)]="ordenSeleccionada.trasiego.producto"
-               placeholder="Nombre del producto" title="Producto a trasegar" />
+      <div *ngIf="ordenSeleccionada?.estado === 'asignado' && ordenSeleccionada?.trasiego.operario; else verTrasiego">
     
-        <label for="depositoOrigen">Depósito Origen:</label>
-        <input id="depositoOrigen" name="depositoOrigen" type="text"
-               [(ngModel)]="ordenSeleccionada.trasiego.deposito_origen"
-               placeholder="Depósito de origen" title="Depósito de origen" />
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Producto</mat-label>
+          <input matInput [(ngModel)]="ordenSeleccionada.trasiego.producto" placeholder="Producto" />
+        </mat-form-field>
     
-        <label for="depositoDestino">Depósito Destino:</label>
-        <input id="depositoDestino" name="depositoDestino" type="text"
-               [(ngModel)]="ordenSeleccionada.trasiego.deposito_destino"
-               placeholder="Depósito destino" title="Depósito destino" />
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Depósito Origen</mat-label>
+          <input matInput [(ngModel)]="ordenSeleccionada.trasiego.deposito_origen" placeholder="Depósito de origen" />
+        </mat-form-field>
     
-        <label for="cantidad">Cantidad a trasegar:</label>
-        <input id="cantidad" name="cantidad" type="text"
-               [(ngModel)]="ordenSeleccionada.trasiego.cantidad_a_trasegar"
-               placeholder="Cantidad" title="Cantidad a trasegar" />
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Depósito Destino</mat-label>
+          <input matInput [(ngModel)]="ordenSeleccionada.trasiego.deposito_destino" placeholder="Depósito destino" />
+        </mat-form-field>
     
-        <label for="tipoLimpiezaTrasiego">Tipo de limpieza:</label>
-        <input id="tipoLimpiezaTrasiego" name="tipoLimpiezaTrasiego" type="text"
-               [(ngModel)]="ordenSeleccionada.trasiego.tipo_de_limpieza"
-               placeholder="Tipo de limpieza" title="Tipo de limpieza" />
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Cantidad a trasegar</mat-label>
+          <input matInput [(ngModel)]="ordenSeleccionada.trasiego.cantidad_a_trasegar" placeholder="Cantidad" />
+        </mat-form-field>
     
-        <label for="observacionesTrasiego">Observaciones:</label>
-        <textarea id="observacionesTrasiego" name="observacionesTrasiego"
-                  [(ngModel)]="ordenSeleccionada.trasiego.observaciones"
-                  placeholder="Observaciones del trasiego"
-                  title="Observaciones del trasiego"></textarea>
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Tipo de limpieza</mat-label>
+          <input matInput [(ngModel)]="ordenSeleccionada.trasiego.tipo_de_limpieza" placeholder="Tipo de limpieza" />
+        </mat-form-field>
     
-          <button (click)="guardarCambios('trasiego')">Guardar cambios</button>
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Observaciones</mat-label>
+          <textarea matInput [(ngModel)]="ordenSeleccionada.trasiego.observaciones" placeholder="Observaciones del trasiego"></textarea>
+        </mat-form-field>
+    
+        <button mat-raised-button color="primary" (click)="guardarCambios('trasiego')">Guardar cambios</button>
+        <button
+          *ngIf="ordenSeleccionada?.estado === 'asignado'"
+          mat-raised-button
+          color="accent"
+          (click)="abrirFinalizarModal()"
+        >
+          Finalizar orden
+        </button>
       </div>
+    
       <ng-template #verTrasiego>
         <p><strong>Producto:</strong> {{ ordenSeleccionada.trasiego?.producto }}</p>
         <p><strong>Depósito Origen:</strong> {{ ordenSeleccionada.trasiego?.deposito_origen }}</p>
@@ -145,33 +186,43 @@
         <p><strong>Observaciones:</strong> {{ ordenSeleccionada.trasiego?.observaciones }}</p>
       </ng-template>
     </div>
+    
 
     <!-- CLARIFICACION -->
     <div *ngIf="ordenSeleccionada?.tipo_de_orden?.trim().toLowerCase() === 'clarificacion'">
-      <div *ngIf="ordenSeleccionada?.estado !== 'pendiente' && ordenSeleccionada?.clarificacion.operario; else verClarificacion">
-        <label for="productoClarificacion">Producto:</label>
-        <input id="productoClarificacion" name="productoClarificacion" type="text"
-               [(ngModel)]="ordenSeleccionada.clarificacion.producto"
-               placeholder="Producto clarificado" title="Producto clarificado" />
+      <div *ngIf="ordenSeleccionada?.estado === 'asignado' && ordenSeleccionada?.clarificacion.operario; else verClarificacion">
     
-        <label for="depositoClarificacion">Depósito:</label>
-        <input id="depositoClarificacion" name="depositoClarificacion" type="text"
-               [(ngModel)]="ordenSeleccionada.clarificacion.deposito"
-               placeholder="Depósito" title="Depósito clarificación" />
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Producto</mat-label>
+          <input matInput [(ngModel)]="ordenSeleccionada.clarificacion.producto" placeholder="Producto clarificado" />
+        </mat-form-field>
     
-        <label for="coadyuvantes">Coadyuvantes extra:</label>
-        <input id="coadyuvantes" name="coadyuvantes" type="text"
-               [(ngModel)]="ordenSeleccionada.clarificacion.coadyuvantes_extra"
-               placeholder="Coadyuvantes" title="Coadyuvantes extra" />
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Depósito</mat-label>
+          <input matInput [(ngModel)]="ordenSeleccionada.clarificacion.deposito" placeholder="Depósito" />
+        </mat-form-field>
     
-        <label for="observacionesClarificacion">Observaciones:</label>
-        <textarea id="observacionesClarificacion" name="observacionesClarificacion"
-                  [(ngModel)]="ordenSeleccionada.clarificacion.observaciones"
-                  placeholder="Observaciones"
-                  title="Observaciones clarificación"></textarea>
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Coadyuvantes extra</mat-label>
+          <input matInput [(ngModel)]="ordenSeleccionada.clarificacion.coadyuvantes_extra" placeholder="Coadyuvantes" />
+        </mat-form-field>
     
-         <button (click)="guardarCambios('clarificacion')">Guardar cambios</button>
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label>Observaciones</mat-label>
+          <textarea matInput [(ngModel)]="ordenSeleccionada.clarificacion.observaciones" placeholder="Observaciones"></textarea>
+        </mat-form-field>
+    
+        <button mat-raised-button color="primary" (click)="guardarCambios('clarificacion')">Guardar cambios</button>
+        <button
+          *ngIf="ordenSeleccionada?.estado === 'asignado'"
+          mat-raised-button
+          color="accent"
+          (click)="abrirFinalizarModal()"
+        >
+          Finalizar orden
+        </button>
       </div>
+    
       <ng-template #verClarificacion>
         <p><strong>Producto:</strong> {{ ordenSeleccionada.clarificacion?.producto }}</p>
         <p><strong>Depósito:</strong> {{ ordenSeleccionada.clarificacion?.deposito }}</p>
@@ -179,5 +230,13 @@
         <p><strong>Observaciones:</strong> {{ ordenSeleccionada.clarificacion?.observaciones }}</p>
       </ng-template>
     </div>
-    
+</div>
+
+<div class="modal" *ngIf="mostrarModalFinalizar" (click)="onClickOutside($event)">
+  <div class="modal-contenido">
+    <h2>¿Deseas finalizar esta orden?</h2>
+    <p>Una vez finalizada, no se podrá modificar.</p>
+    <button (click)="finalizarOrden()">Aceptar</button>
+    <button (click)="cerrarFinalizarModal()">Cancelar</button>
+  </div>
 </div>

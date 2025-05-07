@@ -25,4 +25,16 @@ export class OrdenService {
   getOrdenCompleta(id: number) {
     return this.http.get<any>(`${this.apiUrl}/${id}/completa`);
   }
+
+  actualizarOrden(id: number, tipo: string, datos: any) {
+    const payload = {
+      tipo_de_orden: tipo,
+      ...datos
+    };
+    return this.http.post(`${this.apiUrl}/actualizar-orden/${id}`, payload);
+  }
+  finalizarOrden(id_orden: number) {
+    return this.http.post(`${this.apiUrl}/${id_orden}/finalizar`, {});
+  }
+  
 }
