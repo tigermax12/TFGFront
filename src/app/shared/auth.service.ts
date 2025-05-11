@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthStateService } from './auth-state.service';
 import { TokenService } from './token.service';
+import { tap } from 'rxjs/operators';
 export class User {
   id!: number;
   name!: string;
@@ -32,8 +33,13 @@ return this.http.post('http://127.0.0.1:8000/api/register', user);
 }
 // Login
 login(user: User): Observable<any> {
-return this.http.post<any>('http://127.0.0.1:8000/api/login',
-user);
+  return this.http.post<any>('http://127.0.0.1:8000/api/login', user).pipe(
+    tap((res) => {
+      this.token.handleData(res.access_token); // ← Guarda el token usando el método correcto
+      localStorage.setItem('user', JSON.stringify(res.user)); // ← Guarda el usuario con su rol
+      this.authState.setAuthState(true); // ← Mantiene el estado de autenticación actualizado
+    })
+  );
 }
 // Access user profile
 profileUser(): Observable<any> {

@@ -37,4 +37,8 @@ isValidToken() {
     removeToken() {
     localStorage.removeItem('auth_token');
     }
+    getUser(): any {
+  const userJson = localStorage.getItem('user');
+  return userJson ? JSON.parse(userJson) : null;
+}
     }

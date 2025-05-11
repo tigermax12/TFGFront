@@ -6,13 +6,14 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { CrearOrdenComponent } from './ordenes/crear-orden/crear-orden.component';
 import { VerOrdenComponent } from './ordenes/ver-orden/ver-orden.component';
 import { ListarUsersComponent } from './components/listar-users/listar-users.component';
-import { AuthGuard } from './guards/auth.guard';
+import { AuthGuard } from './guards/auth.guard'; 
+/*Con ccanActivate controlo si estan logeados o no */
 const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'profile', component: UserProfileComponent, canActivate: [AuthGuard] },
-    { path: 'users', component: ListarUsersComponent, canActivate: [AuthGuard]},
+    { path: 'users', component: ListarUsersComponent, canActivate: [AuthGuard], data: { roles: ['encargado', 'supervisor'] }},
     { path: 'crear-orden', component: CrearOrdenComponent, canActivate: [AuthGuard] },
     { path: 'ver-ordenes', component: VerOrdenComponent, canActivate: [AuthGuard] },
 ];
