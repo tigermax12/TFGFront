@@ -224,6 +224,33 @@
 .modal-contenido .clarificacion {
   border-left-color: #2ecc71; /* Verde para clarificación */
 }
+.filtros-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.filtro {
+  flex: 1 1 200px;
+}
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.filtros-fecha {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.limpiar-filtros {
+  margin-top: 10px;
+}
 /* Animaciones */
 @keyframes fadeIn {
   from { opacity: 0; }

@@ -7,6 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { TokenService } from 'src/app/shared/token.service';
 
+
 @Component({
   selector: 'app-ver-orden',
   templateUrl: './ver-orden.component.html',
@@ -35,6 +36,15 @@ export class VerOrdenComponent implements OnInit, AfterViewInit {
   mostrarModalFinalizar: boolean = false;
   @ViewChild(MatSort) sort!: MatSort;
   currentUserRole= '';
+  filtro = {
+    tipo_de_orden: '',
+    estado: '',
+    tipo_fecha: '', // puede ser 'creacion' | 'realizacion' | 'finalizacion'
+    fecha_inicio: null as Date | null,
+    fecha_fin: null as Date | null
+  };
+  mostrarFiltrosFecha = false;
+  filtroAplicado = false;
   constructor(
     private ordenService: OrdenService,
     private http: HttpClient,
@@ -52,7 +62,79 @@ export class VerOrdenComponent implements OnInit, AfterViewInit {
       },
       error: (err) => console.error('Error al cargar usuarios', err)
     });
+    this.dataSource.filterPredicate = this.crearFiltroPersonalizado();
   }
+  aplicarFiltro() {
+  this.filtroAplicado = true;
+  this.dataSource.filter = JSON.stringify(this.filtro);
+  }
+limpiarFiltros() {
+  this.filtro = {
+    tipo_de_orden: '',
+    estado: '',
+    tipo_fecha: '',
+    fecha_inicio: null,
+    fecha_fin: null
+  };
+  this.mostrarFiltrosFecha = false;
+  this.filtroAplicado = false;
+  this.dataSource.filter = '';
+}
+
+onTipoFechaChange() {
+  if (this.filtro.tipo_fecha) {
+    this.mostrarFiltrosFecha = true;
+    this.filtro.fecha_inicio = null;
+    this.filtro.fecha_fin = null;
+  } else {
+    this.mostrarFiltrosFecha = false;
+  }
+  this.aplicarFiltro();
+}
+  crearFiltroPersonalizado() {
+  return (data: any, filter: string): boolean => {
+    const filtroObj = JSON.parse(filter);
+
+    const coincideTipo = !filtroObj.tipo_de_orden || data.tipo_de_orden?.toLowerCase() === filtroObj.tipo_de_orden.toLowerCase();
+    const coincideEstado = !filtroObj.estado || data.estado?.toLowerCase() === filtroObj.estado.toLowerCase();
+
+    let coincideFecha = true;
+
+    if (filtroObj.tipo_fecha && (filtroObj.fecha_inicio || filtroObj.fecha_fin)) {
+      // Definimos un tipo para las claves válidas
+      const tipoFechaValidos = ['creacion', 'realizacion', 'finalizacion'] as const;
+      type TipoFecha = typeof tipoFechaValidos[number];
+      
+      // Verificamos que el tipo_fecha sea válido
+      const tipoFecha: TipoFecha | undefined = tipoFechaValidos.includes(filtroObj.tipo_fecha) 
+        ? filtroObj.tipo_fecha as TipoFecha 
+        : undefined;
+
+      if (tipoFecha) {
+        const fechaCampoMap = {
+          creacion: data.fecha_de_creacion,
+          realizacion: data.fecha_de_realizacion,
+          finalizacion: data.fecha_de_finalizacion
+        };
+        
+        const fechaCampo = fechaCampoMap[tipoFecha];
+
+        if (fechaCampo) {
+          const fecha = new Date(fechaCampo);
+          const desde = filtroObj.fecha_inicio ? new Date(filtroObj.fecha_inicio) : null;
+          const hasta = filtroObj.fecha_fin ? new Date(filtroObj.fecha_fin) : null;
+
+          coincideFecha =
+            (!desde || fecha >= desde) &&
+            (!hasta || fecha <= hasta);
+        }
+      }
+    }
+
+    return coincideTipo && coincideEstado && coincideFecha;
+  };
+}
+
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;

@@ -1,6 +1,63 @@
 <h2 class="titulo">Órdenes de Trabajo</h2>
 
 <div class="mat-elevation-z8">
+  <div class="filtros">
+  <mat-form-field appearance="fill">
+    <mat-label>Tipo de Orden</mat-label>
+    <mat-select [(ngModel)]="filtro.tipo_de_orden" (selectionChange)="aplicarFiltro()">
+      <mat-option value="">Todos</mat-option>
+      <mat-option value="limpieza">Limpieza</mat-option>
+      <mat-option value="trasiego">Trasiego</mat-option>
+      <mat-option value="clarificacion">Clarificación</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Estado</mat-label>
+    <mat-select [(ngModel)]="filtro.estado" (selectionChange)="aplicarFiltro()">
+      <mat-option value="">Todos</mat-option>
+      <mat-option value="pendiente">Pendiente</mat-option>
+      <mat-option value="asignado">Asignado</mat-option>
+      <mat-option value="en proceso">En Proceso</mat-option>
+      <mat-option value="finalizado">Finalizado</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" *ngIf="!mostrarFiltrosFecha">
+    <mat-label>Tipo de Fecha</mat-label>
+    <mat-select [(ngModel)]="filtro.tipo_fecha" (selectionChange)="onTipoFechaChange()">
+      <mat-option value="">Todas</mat-option>
+      <mat-option value="creacion">Fecha de Creación</mat-option>
+      <mat-option value="realizacion">Fecha de Realización</mat-option>
+      <mat-option value="finalizacion">Fecha de Finalización</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div *ngIf="mostrarFiltrosFecha" class="filtros-fecha">
+    <mat-form-field appearance="fill">
+      <mat-label>Fecha Desde</mat-label>
+      <input matInput [matDatepicker]="pickerDesde" [(ngModel)]="filtro.fecha_inicio" (dateChange)="aplicarFiltro()">
+      <mat-datepicker-toggle matSuffix [for]="pickerDesde"></mat-datepicker-toggle>
+      <mat-datepicker #pickerDesde></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Fecha Hasta</mat-label>
+      <input matInput [matDatepicker]="pickerHasta" [(ngModel)]="filtro.fecha_fin" (dateChange)="aplicarFiltro()">
+      <mat-datepicker-toggle matSuffix [for]="pickerHasta"></mat-datepicker-toggle>
+      <mat-datepicker #pickerHasta></mat-datepicker>
+    </mat-form-field>
+
+    <button mat-button color="warn" (click)="mostrarFiltrosFecha = false; filtro.tipo_fecha = ''; aplicarFiltro()">
+      <mat-icon>close</mat-icon> Cambiar tipo
+    </button>
+  </div>
+
+  <button *ngIf="filtroAplicado" mat-raised-button color="warn" (click)="limpiarFiltros()" class="limpiar-filtros">
+    <mat-icon>clear</mat-icon> Limpiar Filtros
+  </button>
+</div>
+
   <table mat-table [dataSource]="dataSource" matSort class="mat-table">
 
     <!-- Nº de Orden -->
