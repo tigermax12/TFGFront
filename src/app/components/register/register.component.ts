@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from './../../shared/auth.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
-
+import { TokenService } from 'src/app/shared/token.service';
 
 @Component({
   selector: 'app-register',
@@ -15,10 +15,12 @@ export class RegisterComponent implements
   errors: any = null;
   hidePassword = true;
   hideConfirm = true; 
+  currentUserRole= '';
   constructor(
     public router: Router,
     public fb: FormBuilder,
-    public authService: AuthService
+    public authService: AuthService,
+    private tokenService: TokenService
   ) {
     this.registerForm = this.fb.group({
       name: [''],
@@ -29,7 +31,10 @@ export class RegisterComponent implements
       c_password: [''],
     });
   }
-  ngOnInit() {}
+  ngOnInit() {
+    const user = this.tokenService.getUser();
+    this.currentUserRole = user?.rol.toLowerCase() || '';
+  }
   onSubmit() {
     this.authService.register(this.registerForm.value).subscribe(
       (result) => {

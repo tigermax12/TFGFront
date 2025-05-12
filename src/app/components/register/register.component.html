@@ -12,7 +12,7 @@
       <mat-label>Rol</mat-label>
       <mat-select formControlName="rol">
         <mat-option value="operario">Operario</mat-option>
-        <mat-option value="encargado">Encargado</mat-option>
+        <mat-option *ngIf="currentUserRole === 'supervisor'" value="encargado">Encargado</mat-option>
       </mat-select>
       <mat-error *ngIf="errors?.rol">{{ errors.rol }}</mat-error>
     </mat-form-field>

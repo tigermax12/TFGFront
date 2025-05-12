@@ -10,12 +10,12 @@ import { AuthGuard } from './guards/auth.guard';
 /*Con ccanActivate controlo si estan logeados o no */
 const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
-    { path: 'login', component: LoginComponent },
-    { path: 'register', component: RegisterComponent },
-    { path: 'profile', component: UserProfileComponent, canActivate: [AuthGuard] },
+    { path: 'login', component: LoginComponent, data: { roles: ['encargado', 'supervisor', 'operario'] } },
+    { path: 'register', component: RegisterComponent, canActivate: [AuthGuard], data: { roles: ['encargado', 'supervisor'] } },
+    { path: 'profile', component: UserProfileComponent, canActivate: [AuthGuard], data: { roles: ['encargado', 'supervisor', 'operario'] } },
     { path: 'users', component: ListarUsersComponent, canActivate: [AuthGuard], data: { roles: ['encargado', 'supervisor'] }},
-    { path: 'crear-orden', component: CrearOrdenComponent, canActivate: [AuthGuard] },
-    { path: 'ver-ordenes', component: VerOrdenComponent, canActivate: [AuthGuard] },
+    { path: 'crear-orden', component: CrearOrdenComponent, canActivate: [AuthGuard], data: { roles: ['encargado', 'supervisor'] } },
+    { path: 'ver-ordenes', component: VerOrdenComponent, canActivate: [AuthGuard], data: { roles: ['encargado', 'supervisor', 'operario'] } },
 ];
 @NgModule({
     imports: [RouterModule.forRoot(routes)],

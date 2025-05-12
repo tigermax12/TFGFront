@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { OrdenService } from '../orden.service';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { TokenService } from 'src/app/shared/token.service';
 
 @Component({
   selector: 'app-ver-orden',
@@ -33,14 +34,17 @@ export class VerOrdenComponent implements OnInit, AfterViewInit {
   listaUsuarios: any[] = [];
   mostrarModalFinalizar: boolean = false;
   @ViewChild(MatSort) sort!: MatSort;
-
+  currentUserRole= '';
   constructor(
     private ordenService: OrdenService,
     private http: HttpClient,
-    private auth: AuthService
+    private auth: AuthService,
+    private tokenService: TokenService
   ) {}
 
   ngOnInit(): void {
+    const user = this.tokenService.getUser();
+    this.currentUserRole = user?.rol?.toLowerCase() || '';
     this.cargarOrdenes();
     this.auth.getAllUsers().subscribe({
       next: (data) => {
@@ -55,11 +59,13 @@ export class VerOrdenComponent implements OnInit, AfterViewInit {
   }
 
   cargarOrdenes() {
-    this.ordenService.listarOrdenes()
-      .subscribe((data: any) => {
-        this.ordenes = data;
-        this.dataSource.data = data;
-      });
+    this.ordenService.listarOrdenes().subscribe((data: any) => {
+    const puedeVerFinalizadas = ['supervisor', 'encargado'].includes(this.currentUserRole);
+    this.ordenes = data.filter((orden: any) => {
+      return puedeVerFinalizadas || orden.estado?.toLowerCase() !== 'finalizado';
+    });
+    this.dataSource.data = this.ordenes;
+  });
   }
 
   
