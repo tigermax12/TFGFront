@@ -4,18 +4,28 @@
   padding-right: 360px;
 }
 
+.user-layout-container-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+
+.table-wrapper {
+  flex: 1;
+}
+
 .full-width-table {
   width: 100%;
+  max-width: 100%;
 }
 
 .floating-card {
-  position: absolute;
-  top: 120px; 
-  right: 0;
   width: 320px;
-  margin: 16px;
+  position: sticky;
+  top: 100px; /* para que quede visible al hacer scroll */
 }
-
 
 :host ::ng-deep .mat-sidenav-content {
   max-width: none !important;

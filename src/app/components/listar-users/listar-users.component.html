@@ -1,6 +1,6 @@
 <h2>Lista de Usuarios</h2>
 
-<div class="user-layout-container">
+<div class="user-layout-container-card">
   <!-- Tabla de usuarios -->
   <div class="table-wrapper">
     <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 full-width-table">
@@ -36,14 +36,15 @@
   </div>
 
  <!-- Card flotante a la derecha -->
-<div class="floating-card">
-  <mat-card class="mat-elevation-z4">
-    <mat-card-title>Creación de Usuarios</mat-card-title>
-    <mat-card-content>
-      <p>Puedes registrar nuevos usuarios desde aquí.</p>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-raised-button color="primary" (click)="goToRegister()">Crear usuario</button>
-    </mat-card-actions>
-  </mat-card>
+  <div class="floating-card">
+    <mat-card class="mat-elevation-z4">
+      <mat-card-title>Creación de Usuarios</mat-card-title>
+      <mat-card-content>
+        <p>Puedes registrar nuevos usuarios desde aquí.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="goToRegister()">Crear usuario</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
 </div>

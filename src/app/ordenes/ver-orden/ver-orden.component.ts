@@ -6,6 +6,10 @@ import { OrdenService } from '../orden.service';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { TokenService } from 'src/app/shared/token.service';
+import { MatPaginator } from '@angular/material/paginator';
+import { ChangeDetectorRef } from '@angular/core';
+import { NgZone } from '@angular/core';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -13,7 +17,9 @@ import { TokenService } from 'src/app/shared/token.service';
   templateUrl: './ver-orden.component.html',
   styleUrls: ['./ver-orden.component.css']
 })
+
 export class VerOrdenComponent implements OnInit, AfterViewInit {
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   ordenes: any[] = [];
   dataSource = new MatTableDataSource<any>([]);
   displayedColumns: string[] = [
@@ -24,11 +30,11 @@ export class VerOrdenComponent implements OnInit, AfterViewInit {
     'nombre_operario',
     'acciones'
   ];
-
   ordenSeleccionada: any = null;
   detallesOrden: any = null;
   tipoSeleccionado: string = '';
   mostrarModal: boolean = false;
+  mostrarModalInforme: boolean = false;
   detallesKeys: string[] = [];
   usuarioSeleccionado: number | null = null;
   contrasenaIngresada: string = '';
@@ -36,108 +42,119 @@ export class VerOrdenComponent implements OnInit, AfterViewInit {
   mostrarModalFinalizar: boolean = false;
   @ViewChild(MatSort) sort!: MatSort;
   currentUserRole= '';
+
   filtro = {
-    tipo_de_orden: '',
-    estado: '',
-    tipo_fecha: '', // puede ser 'creacion' | 'realizacion' | 'finalizacion'
-    fecha_inicio: null as Date | null,
-    fecha_fin: null as Date | null
-  };
+  tipo_de_orden: '',
+  estado: '',
+  fecha_creacion_inicio: null as Date | null,
+  fecha_creacion_fin: null as Date | null,
+  fecha_realizacion_inicio: null as Date | null,
+  fecha_realizacion_fin: null as Date | null,
+  fecha_finalizacion_inicio: null as Date | null,
+  fecha_finalizacion_fin: null as Date | null,
+  usuario_id: null as number | null 
+};
   mostrarFiltrosFecha = false;
   filtroAplicado = false;
   constructor(
     private ordenService: OrdenService,
     private http: HttpClient,
     private auth: AuthService,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private cd: ChangeDetectorRef,
+    private zone: NgZone,
   ) {}
 
   ngOnInit(): void {
     const user = this.tokenService.getUser();
-    this.currentUserRole = user?.rol?.toLowerCase() || '';
-    this.cargarOrdenes();
-    this.auth.getAllUsers().subscribe({
-      next: (data) => {
-        this.listaUsuarios = data;
-      },
-      error: (err) => console.error('Error al cargar usuarios', err)
-    });
-    this.dataSource.filterPredicate = this.crearFiltroPersonalizado();
+  this.currentUserRole = user?.rol?.toLowerCase() || '';
+
+  this.displayedColumns = [
+    'id_orden',
+    'tipo_de_orden',
+    'prioridad',
+    'estado',
+    'nombre_operario'
+  ];
+
+  if (['encargado', 'supervisor'].includes(this.currentUserRole)) {
+    this.displayedColumns.push('fecha_de_creacion', 'fecha_de_realizacion', 'fecha_de_finalizacion');
+  }
+
+  this.displayedColumns.push('acciones');
+
+  this.dataSource.filterPredicate = this.crearFiltroPersonalizado(); // 💡 AÑADIDO
+
+  this.cargarOrdenes();
+
+  this.auth.getAllUsers().subscribe({
+  next: (data) => {
+    this.listaUsuarios = data.filter((usuario: any) => usuario.rol === 'operario');
+  },
+  error: (err) => console.error('Error al cargar usuarios', err)
+});
+
   }
   aplicarFiltro() {
-  this.filtroAplicado = true;
-  this.dataSource.filter = JSON.stringify(this.filtro);
+    this.filtroAplicado = true;
+    this.dataSource.filter = JSON.stringify(this.filtro);
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
-limpiarFiltros() {
+  limpiarFiltros() {
   this.filtro = {
     tipo_de_orden: '',
     estado: '',
-    tipo_fecha: '',
-    fecha_inicio: null,
-    fecha_fin: null
+    fecha_creacion_inicio: null,
+    fecha_creacion_fin: null,
+    fecha_realizacion_inicio: null,
+    fecha_realizacion_fin: null,
+    fecha_finalizacion_inicio: null,
+    fecha_finalizacion_fin: null,
+    usuario_id: null
   };
-  this.mostrarFiltrosFecha = false;
   this.filtroAplicado = false;
   this.dataSource.filter = '';
 }
 
-onTipoFechaChange() {
-  if (this.filtro.tipo_fecha) {
-    this.mostrarFiltrosFecha = true;
-    this.filtro.fecha_inicio = null;
-    this.filtro.fecha_fin = null;
-  } else {
-    this.mostrarFiltrosFecha = false;
-  }
-  this.aplicarFiltro();
-}
   crearFiltroPersonalizado() {
   return (data: any, filter: string): boolean => {
-    const filtroObj = JSON.parse(filter);
+    const f = JSON.parse(filter);
+    
+    console.log('Orden:', data); // 🔍 Verifica qué campos tiene cada orden
 
-    const coincideTipo = !filtroObj.tipo_de_orden || data.tipo_de_orden?.toLowerCase() === filtroObj.tipo_de_orden.toLowerCase();
-    const coincideEstado = !filtroObj.estado || data.estado?.toLowerCase() === filtroObj.estado.toLowerCase();
+    const coincideTipo = !f.tipo_de_orden || data.tipo_de_orden?.toLowerCase() === f.tipo_de_orden.toLowerCase();
+    const coincideEstado = !f.estado || data.estado?.toLowerCase() === f.estado.toLowerCase();
 
-    let coincideFecha = true;
+    const fechas: [string, string, string][] = [
+      ['fecha_creacion_inicio', 'fecha_creacion_fin', 'fecha_de_creacion'],
+      ['fecha_realizacion_inicio', 'fecha_realizacion_fin', 'fecha_de_realizacion'],
+      ['fecha_finalizacion_inicio', 'fecha_finalizacion_fin', 'fecha_de_finalizacion']
+    ];
 
-    if (filtroObj.tipo_fecha && (filtroObj.fecha_inicio || filtroObj.fecha_fin)) {
-      // Definimos un tipo para las claves válidas
-      const tipoFechaValidos = ['creacion', 'realizacion', 'finalizacion'] as const;
-      type TipoFecha = typeof tipoFechaValidos[number];
-      
-      // Verificamos que el tipo_fecha sea válido
-      const tipoFecha: TipoFecha | undefined = tipoFechaValidos.includes(filtroObj.tipo_fecha) 
-        ? filtroObj.tipo_fecha as TipoFecha 
-        : undefined;
+    const coincideFechas = fechas.every(([inicioKey, finKey, campo]) => {
+      const desde = f[inicioKey] ? new Date(f[inicioKey]) : null;
+      const hasta = f[finKey] ? new Date(f[finKey]) : null;
+      const valor = data[campo] ? new Date(data[campo]) : null;
+      if (!valor) return true;
+      return (!desde || valor >= desde) && (!hasta || valor <= hasta);
+    });
 
-      if (tipoFecha) {
-        const fechaCampoMap = {
-          creacion: data.fecha_de_creacion,
-          realizacion: data.fecha_de_realizacion,
-          finalizacion: data.fecha_de_finalizacion
-        };
-        
-        const fechaCampo = fechaCampoMap[tipoFecha];
+    const coincideUsuario = !f.usuario_id || data.nombre_operario?.toLowerCase().includes(this.obtenerNombreOperarioPorId(f.usuario_id)?.toLowerCase() || '');
 
-        if (fechaCampo) {
-          const fecha = new Date(fechaCampo);
-          const desde = filtroObj.fecha_inicio ? new Date(filtroObj.fecha_inicio) : null;
-          const hasta = filtroObj.fecha_fin ? new Date(filtroObj.fecha_fin) : null;
 
-          coincideFecha =
-            (!desde || fecha >= desde) &&
-            (!hasta || fecha <= hasta);
-        }
-      }
-    }
-
-    return coincideTipo && coincideEstado && coincideFecha;
+    return coincideTipo && coincideEstado && coincideFechas && coincideUsuario;
   };
 }
-
+obtenerNombreOperarioPorId(id: number | null): string | null {
+  const user = this.listaUsuarios.find(u => u.id === id);
+  return user ? user.name : null;
+}
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
   }
 
   cargarOrdenes() {
@@ -149,8 +166,6 @@ onTipoFechaChange() {
     this.dataSource.data = this.ordenes;
   });
   }
-
-  
 
   getRowColor(orden: any): string {
     if (orden.estado?.toLowerCase() === 'pendiente') {
@@ -193,7 +208,12 @@ onTipoFechaChange() {
       orden_id: this.ordenSeleccionada?.id_orden
     }).subscribe({
       next: (res) => {
-        console.log('Asignación exitosa', res);
+        Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'Orden asignada correctamente',
+        confirmButtonColor: '#3085d6'
+      });
         this.cargarOrdenes();
         this.cerrarModal();
       },
@@ -236,7 +256,12 @@ onTipoFechaChange() {
         // 🧼 Resetear vista como si estuviera en estado "pendiente"
         this.mostrarModalFinalizar = false;
   
-        alert('Orden finalizada correctamente.');
+        Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'Orden finalizada correctamente',
+        confirmButtonColor: '#3085d6'
+      });
   
         // Esto fuerza que la vista se actualice como si fuera "pendiente"
         // por ejemplo: sin edición habilitada, solo vista
@@ -247,5 +272,24 @@ onTipoFechaChange() {
       }
     });
   }
+
+  abrirModalInforme(event: Event) {
+  console.log('Modal de informe abierto');
+  event.preventDefault();
+  this.mostrarModalInforme = true;
+  this.cd.detectChanges();
+}
+
+cerrarModalInforme() {
+  this.mostrarModalInforme = false;
+}
+
+onClickOutsideInforme(event: MouseEvent) {
+  if ((event.target as HTMLElement).classList.contains('modal')) {
+    this.cerrarModalInforme();
+  }
+}
+
+
 
 }

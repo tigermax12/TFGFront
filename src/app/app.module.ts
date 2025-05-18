@@ -29,6 +29,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDateFormats } from '@angular/material/core';
 import { MatNativeDateModule } from '@angular/material/core';
+import { InformeOrdenComponent } from './ordenes/informe-orden/informe-orden.component';
+
 
 const MY_DATE_FORMATS: MatDateFormats = {
   parse: {
@@ -50,7 +52,8 @@ const MY_DATE_FORMATS: MatDateFormats = {
     UserProfileComponent,
     CrearOrdenComponent,
     VerOrdenComponent,
-    ListarUsersComponent
+    ListarUsersComponent,
+    InformeOrdenComponent
   ],
   imports: [
     BrowserModule,

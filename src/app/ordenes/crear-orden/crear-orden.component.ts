@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators  } from '@angular/forms';
 import { OrdenService } from '../orden.service';
 import { Router } from '@angular/router';
-
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-crear-orden',
   templateUrl: './crear-orden.component.html',
@@ -64,12 +64,25 @@ export class CrearOrdenComponent {
     formValue.estado = 'pendiente';
   
     this.ordenService.crearOrden(formValue).subscribe({
-      next: () => {
-        alert('Orden creada con éxito');
-        this.router.navigate(['/ver-ordenes']);
-      },
-      error: err => alert('Error al crear la orden: ' + err.error?.error || err.message)
+  next: () => {
+    Swal.fire({
+      icon: 'success',
+      title: 'Éxito',
+      text: 'Orden creada con éxito',
+      confirmButtonColor: '#3085d6'
+    }).then(() => {
+      this.router.navigate(['/ver-ordenes']);
     });
+  },
+  error: err => {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Error al crear la orden: ' + (err.error?.error || err.message),
+      confirmButtonColor: '#d33'
+    });
+  }
+});
   }
   
   

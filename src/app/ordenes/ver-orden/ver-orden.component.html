@@ -21,37 +21,63 @@
       <mat-option value="en proceso">En Proceso</mat-option>
       <mat-option value="finalizado">Finalizado</mat-option>
     </mat-select>
+    
   </mat-form-field>
+  <mat-form-field appearance="fill">
+  <mat-label>Operario</mat-label>
+  <mat-select [(ngModel)]="filtro.usuario_id" (selectionChange)="aplicarFiltro()">
+    <mat-option [value]="null">Todos</mat-option>
+    <mat-option *ngFor="let user of listaUsuarios" [value]="user.id">
+      {{ user.name }} - {{ user.numero_trabajador }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
 
-  <mat-form-field appearance="fill" *ngIf="!mostrarFiltrosFecha">
-    <mat-label>Tipo de Fecha</mat-label>
-    <mat-select [(ngModel)]="filtro.tipo_fecha" (selectionChange)="onTipoFechaChange()">
-      <mat-option value="">Todas</mat-option>
-      <mat-option value="creacion">Fecha de Creación</mat-option>
-      <mat-option value="realizacion">Fecha de Realización</mat-option>
-      <mat-option value="finalizacion">Fecha de Finalización</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <div *ngIf="mostrarFiltrosFecha" class="filtros-fecha">
+  <div class="filtros-fechas-multiples">
+  <div class="rango-fecha">
+    <label>Fecha de Creación</label>
     <mat-form-field appearance="fill">
-      <mat-label>Fecha Desde</mat-label>
-      <input matInput [matDatepicker]="pickerDesde" [(ngModel)]="filtro.fecha_inicio" (dateChange)="aplicarFiltro()">
-      <mat-datepicker-toggle matSuffix [for]="pickerDesde"></mat-datepicker-toggle>
-      <mat-datepicker #pickerDesde></mat-datepicker>
+      <input matInput [matDatepicker]="pickerCreacionDesde" placeholder="Desde" [(ngModel)] ="filtro.fecha_creacion_inicio" (dateChange)="aplicarFiltro()">
+      <mat-datepicker-toggle matSuffix [for]="pickerCreacionDesde"></mat-datepicker-toggle>
+      <mat-datepicker #pickerCreacionDesde></mat-datepicker>
     </mat-form-field>
-
     <mat-form-field appearance="fill">
-      <mat-label>Fecha Hasta</mat-label>
-      <input matInput [matDatepicker]="pickerHasta" [(ngModel)]="filtro.fecha_fin" (dateChange)="aplicarFiltro()">
-      <mat-datepicker-toggle matSuffix [for]="pickerHasta"></mat-datepicker-toggle>
-      <mat-datepicker #pickerHasta></mat-datepicker>
+      <input matInput [matDatepicker]="pickerCreacionHasta" placeholder="Hasta" [(ngModel)]="filtro.fecha_creacion_fin" (dateChange)="aplicarFiltro()">
+      <mat-datepicker-toggle matSuffix [for]="pickerCreacionHasta"></mat-datepicker-toggle>
+      <mat-datepicker #pickerCreacionHasta></mat-datepicker>
     </mat-form-field>
-
-    <button mat-button color="warn" (click)="mostrarFiltrosFecha = false; filtro.tipo_fecha = ''; aplicarFiltro()">
-      <mat-icon>close</mat-icon> Cambiar tipo
-    </button>
   </div>
+
+  <div class="rango-fecha">
+    <label>Fecha de Realización</label>
+    <mat-form-field appearance="fill">
+      <input matInput [matDatepicker]="pickerRealizacionDesde" placeholder="Desde" [(ngModel)]="filtro.fecha_realizacion_inicio" (dateChange)="aplicarFiltro()">
+      <mat-datepicker-toggle matSuffix [for]="pickerRealizacionDesde"></mat-datepicker-toggle>
+      <mat-datepicker #pickerRealizacionDesde></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <input matInput [matDatepicker]="pickerRealizacionHasta" placeholder="Hasta" [(ngModel)]="filtro.fecha_realizacion_fin" (dateChange)="aplicarFiltro()">
+      <mat-datepicker-toggle matSuffix [for]="pickerRealizacionHasta"></mat-datepicker-toggle>
+      <mat-datepicker #pickerRealizacionHasta></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <div class="rango-fecha">
+    <label>Fecha de Finalización</label>
+    <mat-form-field appearance="fill">
+      <input matInput [matDatepicker]="pickerFinalizacionDesde" placeholder="Desde" [(ngModel)]="filtro.fecha_finalizacion_inicio" (dateChange)="aplicarFiltro()">
+      <mat-datepicker-toggle matSuffix [for]="pickerFinalizacionDesde"></mat-datepicker-toggle>
+      <mat-datepicker #pickerFinalizacionDesde></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <input matInput [matDatepicker]="pickerFinalizacionHasta" placeholder="Hasta" [(ngModel)]="filtro.fecha_finalizacion_fin" (dateChange)="aplicarFiltro()">
+      <mat-datepicker-toggle matSuffix [for]="pickerFinalizacionHasta"></mat-datepicker-toggle>
+      <mat-datepicker #pickerFinalizacionHasta></mat-datepicker>
+    </mat-form-field>
+  </div>
+</div>
+
+
 
   <button *ngIf="filtroAplicado" mat-raised-button color="warn" (click)="limpiarFiltros()" class="limpiar-filtros">
     <mat-icon>clear</mat-icon> Limpiar Filtros
@@ -99,7 +125,29 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Operario</th>
       <td mat-cell *matCellDef="let orden">{{ orden.nombre_operario || 'SIN ASIGNAR' }}</td>
     </ng-container>
+    <!-- Fecha de Creación -->
+    <ng-container matColumnDef="fecha_de_creacion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Creación</th>
+      <td mat-cell *matCellDef="let orden">
+        {{ orden.fecha_de_creacion | date: 'dd/MM/yy' }}
+      </td>
+    </ng-container>
 
+    <!-- Fecha de Realización -->
+    <ng-container matColumnDef="fecha_de_realizacion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Realización</th>
+      <td mat-cell *matCellDef="let orden">
+        {{ orden.fecha_de_realizacion | date: 'dd/MM/yy' }}
+      </td>
+    </ng-container>
+
+    <!-- Fecha de Finalización -->
+    <ng-container matColumnDef="fecha_de_finalizacion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Finalización</th>
+      <td mat-cell *matCellDef="let orden">
+        {{ orden.fecha_de_finalizacion ? (orden.fecha_de_finalizacion | date: 'dd/MM/yy') : 'Sin Finalizar' }}
+      </td>
+    </ng-container>
     <!-- Acciones -->
     <ng-container matColumnDef="acciones">
       <th mat-header-cell *matHeaderCellDef>Acciones</th>
@@ -115,8 +163,18 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="getRowColor(row)"></tr>
 
   </table>
+  
+    <mat-paginator [length]="dataSource.filteredData.length"
+                [pageSize]="10" 
+                [pageSizeOptions]="[10]" 
+                showFirstLastButtons> 
+  </mat-paginator> 
 </div>
-
+<div style="text-align: left; margin-top: 1rem;">
+  <button mat-raised-button color="accent" (click)="abrirModalInforme($event)">
+    <mat-icon>description</mat-icon> Generar Informe
+  </button>
+</div>
 
 <div class="modal" *ngIf="mostrarModal" (click)="onClickOutside($event)">
   <div class="modal-contenido">
@@ -288,6 +346,11 @@
       </ng-template>
     </div>
 </div>
+
+<div class="modal">
+  <app-informe-orden></app-informe-orden>
+</div>
+
 
 <div class="modal" *ngIf="mostrarModalFinalizar" (click)="onClickOutside($event)">
   <div class="modal-contenido">
