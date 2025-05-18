@@ -9,9 +9,11 @@ import { TokenService } from 'src/app/shared/token.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { ChangeDetectorRef } from '@angular/core';
 import { NgZone } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { InformeOrdenComponent } from '../informe-orden/informe-orden.component';
 import Swal from 'sweetalert2';
-
-
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
 @Component({
   selector: 'app-ver-orden',
   templateUrl: './ver-orden.component.html',
@@ -63,6 +65,7 @@ export class VerOrdenComponent implements OnInit, AfterViewInit {
     private tokenService: TokenService,
     private cd: ChangeDetectorRef,
     private zone: NgZone,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -273,11 +276,14 @@ obtenerNombreOperarioPorId(id: number | null): string | null {
     });
   }
 
-  abrirModalInforme(event: Event) {
-  console.log('Modal de informe abierto');
-  event.preventDefault();
-  this.mostrarModalInforme = true;
-  this.cd.detectChanges();
+  abrirModalInforme() {
+  this.dialog.open(InformeOrdenComponent, {
+    width: '80%',
+    height: '80%',
+    data: {
+      ordenes: this.dataSource.filteredData
+    }
+  });
 }
 
 cerrarModalInforme() {
@@ -290,6 +296,24 @@ onClickOutsideInforme(event: MouseEvent) {
   }
 }
 
+/*exportarAExcel(): void {
+  const datos = this.dataSource.filteredData.map(o => ({
+    'ID Orden': o.id_orden,
+    'Tipo': o.tipo_de_orden,
+    'Prioridad': o.prioridad,
+    'Estado': o.estado,
+    'Operario': o.nombre_operario || 'Sin asignar',
+    'Fecha Creación': o.fecha_de_creacion,
+    'Fecha Realización': o.fecha_de_realizacion,
+    'Fecha Finalización': o.fecha_de_finalizacion
+  }));
 
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(datos);
+  const workbook: XLSX.WorkBook = { Sheets: { 'Órdenes': worksheet }, SheetNames: ['Órdenes'] };
+  const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+  const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+  FileSaver.saveAs(blob, 'informe_ordenes.xlsx');
+}*/
 
 }

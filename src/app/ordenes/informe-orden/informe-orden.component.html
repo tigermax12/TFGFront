@@ -1,9 +1,8 @@
-<div class="modal" >
-    <p>Modal works</p>
-  <!--<div class="modal-contenido">
-    <h2>Informe de Órdenes Filtradas</h2>
-    <p>Se incluirán {{ dataSource.filteredData.length }} órdenes en el informe.</p>
+<h2 mat-dialog-title>Informe de Órdenes Filtradas</h2>
+<mat-dialog-content>
+  <p>Se incluirán {{ data.ordenes.length }} órdenes en el informe.</p>
 
+  <div *ngIf="data.ordenes.length > 0">
     <table class="tabla-informe">
       <thead>
         <tr>
@@ -14,7 +13,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let orden of dataSource.filteredData">
+        <tr *ngFor="let orden of data.ordenes">
           <td>{{ orden.id_orden }}</td>
           <td>{{ orden.tipo_de_orden }}</td>
           <td>{{ orden.estado }}</td>
@@ -22,10 +21,13 @@
         </tr>
       </tbody>
     </table>
+  </div>
 
-    <div class="acciones-modal">
-      <button mat-stroked-button color="warn" (click)="cerrarModalInforme()">Cancelar</button>
-      <button mat-raised-button color="primary" (click)="exportarAExcel()">Confirmar y Descargar</button>
-    </div>
-  </div>-->
-</div>
+  <div *ngIf="data.ordenes.length === 0">
+    <p>No hay órdenes que coincidan con los filtros aplicados.</p>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-raised-button color="primary" (click)="exportarAExcel()">Exportar a Excel</button>
+</mat-dialog-actions>

@@ -30,7 +30,7 @@ import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDateFormats } from '@angular/material/core';
 import { MatNativeDateModule } from '@angular/material/core';
 import { InformeOrdenComponent } from './ordenes/informe-orden/informe-orden.component';
-
+import { MatDialogModule } from '@angular/material/dialog';
 
 const MY_DATE_FORMATS: MatDateFormats = {
   parse: {
@@ -76,6 +76,7 @@ const MY_DATE_FORMATS: MatDateFormats = {
     MatCardModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatDialogModule,
   ],
   providers: [
     {
