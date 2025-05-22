@@ -1,56 +1,10 @@
 <style>
-  .spacer {
-    flex: 1 1 auto;
-  }
   
-  .main-content {
-  padding: 24px;
-  max-width: 100%;
-  width: 100%;
-  box-sizing: border-box;
-  }
-  
-  /* Aumenta el alto del nav y centra los elementos */
-  mat-toolbar {
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 24px;
-    font-size: 18px;
-  }
-  
-  /* Centra los botones y texto (excepto el logo) */
-  .nav-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    gap: 16px;
-  }
-  
-  /* Imagen (logo) queda a la izquierda sin afectar el centrado del resto */
-  .nav-logo {
-    display: flex;
-    align-items: center;
-    margin-right: 16px;
-  }
-  
-  /* Transición para los botones */
-  mat-toolbar button {
-    transition: background-color 0.3s ease, color 0.3s ease;
-    margin-left: 8px;
-  }
-  
-  mat-toolbar button:hover {
-    background-color: #ffffff33; /* ligeramente más claro */
-    color: #fff;
-  }
   </style>
   
   <mat-toolbar color="primary">
     <div class="nav-logo">
-      <img width="48" alt="Angular Logo" src="data:image/svg+xml;base64,..." />
+      <img src="assets/images/logo.png" alt="Logo" width="48" />
     </div>
   
     <div class="nav-content">
@@ -68,6 +22,13 @@
         <button mat-button routerLink="/ver-ordenes">VER ÓRDENES</button>
         <button mat-button routerLink="/crear-orden">CREAR ÓRDENES</button>
       </ng-container>
+      <!-- Imagen de perfil en la barra de navegación -->
+      <div class="avatar-wrapper" *ngIf="isSignedIn && user?.profile_image_url" (click)="goToProfile()">
+        <img [src]="user.profile_image_url" alt="Avatar" class="avatar-img" />
+        <div class="avatar-overlay">
+          <span>Perfil</span>
+        </div>
+      </div>
     </div>
   </mat-toolbar>
   

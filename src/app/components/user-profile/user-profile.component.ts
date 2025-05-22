@@ -4,8 +4,11 @@ import { Router } from '@angular/router';
 
 // User interface
 export class User {
-    name: any;
-    email: any;
+  name?: string;
+  email?: string;
+  rol?: string;
+  numero_trabajador?: string;
+  profile_image_url?: string;
 }
 @Component({
 selector: 'app-user-profile',

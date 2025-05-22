@@ -347,37 +347,6 @@
     </div>
 </div>
 
-<!--<div class="modal" *ngIf="mostrarModalInforme" (click)="onClickOutsideInforme($event)" [style.display]="mostrarModalInforme ? 'flex' : 'none'">
-  <div class="modal-contenido">
-    <h2>Informe de Órdenes Filtradas</h2>
-    <p>Se incluirán {{ dataSource.filteredData.length }} órdenes en el informe.</p>
-
-    <table class="tabla-informe">
-      <thead>
-        <tr>
-          <th>Nº Orden</th>
-          <th>Tipo</th>
-          <th>Estado</th>
-          <th>Operario</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let orden of dataSource.filteredData">
-          <td>{{ orden.id_orden }}</td>
-          <td>{{ orden.tipo_de_orden }}</td>
-          <td>{{ orden.estado }}</td>
-          <td>{{ orden.nombre_operario || 'Sin asignar' }}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="acciones-modal">
-      <button mat-stroked-button color="warn" (click)="cerrarModalInforme()">Cancelar</button>
-      <button mat-raised-button color="primary" (click)="exportarAExcel()">Confirmar y Descargar</button>
-    </div>
-  </div>
-</div>-->
-
 
 <div class="modal" *ngIf="mostrarModalFinalizar" (click)="onClickOutside($event)">
   <div class="modal-contenido">

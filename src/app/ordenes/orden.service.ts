@@ -36,5 +36,8 @@ export class OrdenService {
   finalizarOrden(id_orden: number) {
     return this.http.post(`${this.apiUrl}/${id_orden}/finalizar`, {});
   }
-  
+  autoasignarOrden(user_id: number, password: string, orden_id: number) {
+  const payload = { user_id, password, orden_id };
+  return this.http.post(`${this.apiUrl}/autoasignar`, payload);
+}
 }

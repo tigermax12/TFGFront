@@ -18,7 +18,7 @@ export class User {
   providedIn: 'root'
 })
 export class AuthService {
-
+  apiUrl = 'http://127.0.0.1:8000/api/';
   constructor(
     private http: HttpClient,
     private authState: AuthStateService,
@@ -27,13 +27,12 @@ export class AuthService {
   
   ) {}
 // User registration
-register(user: User): Observable<any> {
-  console.log(user)
-return this.http.post('http://127.0.0.1:8000/api/register', user);
+register(formData: FormData): Observable<any> {
+  return this.http.post(`${this.apiUrl}register`, formData);
 }
 // Login
 login(user: User): Observable<any> {
-  return this.http.post<any>('http://127.0.0.1:8000/api/login', user).pipe(
+  return this.http.post<any>(`${this.apiUrl}login`, user).pipe(
     tap((res) => {
       this.token.handleData(res.access_token); // ← Guarda el token usando el método correcto
       localStorage.setItem('user', JSON.stringify(res.user)); // ← Guarda el usuario con su rol
@@ -43,7 +42,7 @@ login(user: User): Observable<any> {
 }
 // Access user profile
 profileUser(): Observable<any> {
-return this.http.get('http://127.0.0.1:8000/api/me');
+  return this.http.get(`${this.apiUrl}me`);
 }
 getUserId(): Observable<number> {
   return new Observable(observer => {
@@ -59,7 +58,7 @@ getUserId(): Observable<number> {
   });
 }
 getAllUsers(): Observable<User[]> {
-  return this.http.get<User[]>('http://127.0.0.1:8000/api/index');
+  return this.http.get<User[]>(`${this.apiUrl}index`);
 }
 signOut() {
   this.token.removeToken();

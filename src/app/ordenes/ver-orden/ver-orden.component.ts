@@ -205,27 +205,32 @@ obtenerNombreOperarioPorId(id: number | null): string | null {
   }
 
   validarYAsignar() {
-    this.http.post(`${environment.apiUrl}/ordendetrabajo/autoasignar`, {
-      user_id: this.usuarioSeleccionado,
-      password: this.contrasenaIngresada,
-      orden_id: this.ordenSeleccionada?.id_orden
-    }).subscribe({
-      next: (res) => {
-        Swal.fire({
+  if (!this.usuarioSeleccionado || !this.contrasenaIngresada || !this.ordenSeleccionada?.id_orden) {
+    alert('Faltan datos para asignar la orden.');
+    return;
+  }
+
+  this.ordenService.autoasignarOrden(
+    this.usuarioSeleccionado,
+    this.contrasenaIngresada,
+    this.ordenSeleccionada.id_orden
+  ).subscribe({
+    next: (res) => {
+      Swal.fire({
         icon: 'success',
         title: 'Éxito',
         text: 'Orden asignada correctamente',
         confirmButtonColor: '#3085d6'
       });
-        this.cargarOrdenes();
-        this.cerrarModal();
-      },
-      error: (err) => {
-        console.error('Error al asignar la orden', err);
-        alert('Error al asignar la orden. Verifica usuario y contraseña.');
-      }
-    });
-  }
+      this.cargarOrdenes();
+      this.cerrarModal();
+    },
+    error: (err) => {
+      console.error('Error al asignar la orden', err);
+      alert('Error al asignar la orden. Verifica usuario y contraseña.');
+    }
+  });
+}
 
   guardarCambios(tipo: 'limpieza' | 'trasiego' | 'clarificacion') {
     if (!this.ordenSeleccionada || !this.ordenSeleccionada.id_orden) return;
@@ -234,7 +239,13 @@ obtenerNombreOperarioPorId(id: number | null): string | null {
     const datos = this.ordenSeleccionada[tipo];
   
     this.ordenService.actualizarOrden(id, tipo, datos).subscribe({
-      next: () => alert(`Datos de ${tipo} actualizados correctamente.`),
+      next: () => 
+        Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: `Datos de tipo ${tipo} guardados correctamente`,
+        confirmButtonColor: '#3085d6'
+      }),
       error: (error) => {
         console.error(error);
         alert(`Error al guardar los cambios de ${tipo}.`);
@@ -258,7 +269,9 @@ obtenerNombreOperarioPorId(id: number | null): string | null {
   
         // 🧼 Resetear vista como si estuviera en estado "pendiente"
         this.mostrarModalFinalizar = false;
-  
+        
+        this.cargarOrdenes();
+        
         Swal.fire({
         icon: 'success',
         title: 'Éxito',
@@ -295,25 +308,4 @@ onClickOutsideInforme(event: MouseEvent) {
     this.cerrarModalInforme();
   }
 }
-
-/*exportarAExcel(): void {
-  const datos = this.dataSource.filteredData.map(o => ({
-    'ID Orden': o.id_orden,
-    'Tipo': o.tipo_de_orden,
-    'Prioridad': o.prioridad,
-    'Estado': o.estado,
-    'Operario': o.nombre_operario || 'Sin asignar',
-    'Fecha Creación': o.fecha_de_creacion,
-    'Fecha Realización': o.fecha_de_realizacion,
-    'Fecha Finalización': o.fecha_de_finalizacion
-  }));
-
-  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(datos);
-  const workbook: XLSX.WorkBook = { Sheets: { 'Órdenes': worksheet }, SheetNames: ['Órdenes'] };
-  const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-
-  const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-  FileSaver.saveAs(blob, 'informe_ordenes.xlsx');
-}*/
-
 }

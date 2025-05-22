@@ -46,6 +46,12 @@
       </button>
       <mat-error *ngIf="errors?.c_password">{{ errors.c_password }}</mat-error>
     </mat-form-field>
+    
+    <button mat-raised-button color="primary" type="button" (click)="fileInput.click()">Subir Imagen</button>
+    <input type="file" #fileInput hidden (change)="onFileChange($event)" />
+    <p *ngIf="selectedImage">{{ selectedImage.name }}</p>
+
+
 
     <button mat-raised-button color="primary" class="submit-button" type="submit">
       Registrar

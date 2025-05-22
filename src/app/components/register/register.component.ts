@@ -9,13 +9,14 @@ import { TokenService } from 'src/app/shared/token.service';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent implements
-  OnInit {
+export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   errors: any = null;
   hidePassword = true;
   hideConfirm = true; 
-  currentUserRole= '';
+  currentUserRole = '';
+  selectedImage: File | null = null;
+
   constructor(
     public router: Router,
     public fb: FormBuilder,
@@ -31,12 +32,29 @@ export class RegisterComponent implements
       c_password: [''],
     });
   }
+
   ngOnInit() {
     const user = this.tokenService.getUser();
     this.currentUserRole = user?.rol.toLowerCase() || '';
   }
+
+  onFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedImage = file;
+    }
+  }
+
   onSubmit() {
-    this.authService.register(this.registerForm.value).subscribe(
+    const formData = new FormData();
+
+    Object.entries(this.registerForm.value).forEach(([key, value]) => {
+    formData.append(key, value as string); // ← Castea explícitamente a string
+    });
+    if (this.selectedImage) {
+      formData.append('profile_image', this.selectedImage);
+    }
+    this.authService.register(formData).subscribe(
       (result) => {
         console.log(result);
       },
