@@ -65,4 +65,11 @@ signOut() {
   this.authState.setAuthState(false);
   this.router.navigate(['/login']);
 }
+deleteUser(id: number) {
+  return this.http.delete(`${this.apiUrl}users/${id}`);
+}
+changePassword(data: any) {
+  return this.http.post(`${this.apiUrl}change-password`, data);
+}
+
 }

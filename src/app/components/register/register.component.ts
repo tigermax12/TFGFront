@@ -3,7 +3,8 @@ import { Router } from '@angular/router';
 import { AuthService } from './../../shared/auth.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { TokenService } from 'src/app/shared/token.service';
-
+import Swal from 'sweetalert2';
+import { Validators } from '@angular/forms'
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -24,12 +25,12 @@ export class RegisterComponent implements OnInit {
     private tokenService: TokenService
   ) {
     this.registerForm = this.fb.group({
-      name: [''],
-      rol: [''],
-      email: [''],
-      numero_trabajador: [''],
-      password: [''],
-      c_password: [''],
+      name: ['', Validators.required],
+      rol: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      numero_trabajador: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      c_password: ['', Validators.required],
     });
   }
 
@@ -46,25 +47,51 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit() {
-    const formData = new FormData();
+  const formData = new FormData();
 
-    Object.entries(this.registerForm.value).forEach(([key, value]) => {
-    formData.append(key, value as string); // ← Castea explícitamente a string
-    });
-    if (this.selectedImage) {
-      formData.append('profile_image', this.selectedImage);
-    }
-    this.authService.register(formData).subscribe(
-      (result) => {
-        console.log(result);
-      },
-      (error) => {
-        this.errors = error.error;
-      },
-      () => {
-        this.registerForm.reset();
-        this.router.navigate(['users']);
-      }
-    );
+  Object.entries(this.registerForm.value).forEach(([key, value]) => {
+  formData.append(key, String(value));
+});
+
+  if (this.selectedImage) {
+    formData.append('profile_image', this.selectedImage);
   }
+
+  this.errors = null; // Limpiar errores previos
+
+  this.authService.register(formData).subscribe(
+    (result) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Registro exitoso',
+        text: 'El usuario ha sido registrado correctamente.',
+      });
+      this.registerForm.reset();
+      this.router.navigate(['users']);
+    },
+    (error) => {
+      if (error.status === 400 && error.error) {
+        this.errors = error.error;
+
+        const formattedErrors = Object.entries(error.error)
+          .map(([key, value]) => `• ${(value as string[])[0]}`)
+          .join('<br>');
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Errores en el formulario',
+          html: formattedErrors, // usa 'html' en vez de 'text' para soportar saltos de línea
+        });
+
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error del servidor',
+          text: error.error?.message || 'Ocurrió un error inesperado.',
+        });
+      }
+    }
+  );
+}
+
 }

@@ -83,7 +83,7 @@ export class VerOrdenComponent implements OnInit, AfterViewInit {
   if (['encargado', 'supervisor'].includes(this.currentUserRole)) {
     this.displayedColumns.push('fecha_de_creacion', 'fecha_de_realizacion', 'fecha_de_finalizacion');
   }
-
+  
   this.displayedColumns.push('acciones');
 
   this.dataSource.filterPredicate = this.crearFiltroPersonalizado(); // 💡 AÑADIDO
@@ -98,6 +98,10 @@ export class VerOrdenComponent implements OnInit, AfterViewInit {
 });
 
   }
+  get isEncargadoOrSupervisor(): boolean {
+  return ['encargado', 'supervisor'].includes(this.currentUserRole);
+}
+
   aplicarFiltro() {
     this.filtroAplicado = true;
     this.dataSource.filter = JSON.stringify(this.filtro);
@@ -163,9 +167,25 @@ obtenerNombreOperarioPorId(id: number | null): string | null {
   cargarOrdenes() {
     this.ordenService.listarOrdenes().subscribe((data: any) => {
     const puedeVerFinalizadas = ['supervisor', 'encargado'].includes(this.currentUserRole);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
     this.ordenes = data.filter((orden: any) => {
+      // Si es operario, filtrar por fecha de realización (hoy o anterior)
+      if (this.currentUserRole === 'operario') {
+        const fechaRealizacion = orden.fecha_de_realizacion ? new Date(orden.fecha_de_realizacion) : null;
+        if (fechaRealizacion) {
+          fechaRealizacion.setHours(0, 0, 0, 0);
+          if (fechaRealizacion > hoy) {
+            return false;
+          }
+        }
+      }
+      
+      // Filtro para no mostrar finalizadas a no ser que sea encargado/supervisor
       return puedeVerFinalizadas || orden.estado?.toLowerCase() !== 'finalizado';
     });
+    
     this.dataSource.data = this.ordenes;
   });
   }

@@ -1,7 +1,7 @@
 <h2 class="titulo">Órdenes de Trabajo</h2>
 
-<div class="mat-elevation-z8">
-  <div class="filtros">
+<div class="mat-elevation-z8" >
+  <div class="filtros" *ngIf="isEncargadoOrSupervisor">
   <mat-form-field appearance="fill">
     <mat-label>Tipo de Orden</mat-label>
     <mat-select [(ngModel)]="filtro.tipo_de_orden" (selectionChange)="aplicarFiltro()">
@@ -163,10 +163,10 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="getRowColor(row)"></tr>
 
   </table>
-  <div style="text-align: left; margin-top: 1rem;">
-  <button mat-raised-button color="accent" (click)="abrirModalInforme()">
-  <mat-icon>description</mat-icon> Generar Informe
-</button>
+  <div style="text-align: left; margin-top: 1rem;" *ngIf="isEncargadoOrSupervisor">
+  <button mat-raised-button color="accent" (click)="abrirModalInforme()" >
+    <mat-icon>description</mat-icon> Generar Informe
+  </button>
 </div>
     <mat-paginator [length]="dataSource.filteredData.length"
                 [pageSize]="10" 

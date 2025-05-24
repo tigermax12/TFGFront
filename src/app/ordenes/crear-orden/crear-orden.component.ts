@@ -78,7 +78,7 @@ export class CrearOrdenComponent {
     Swal.fire({
       icon: 'error',
       title: 'Error',
-      text: 'Error al crear la orden: ' + (err.error?.error || err.message),
+      text: 'Error al crear la orden: Debes rellenos los campos Tipo de orden, Priodad y Fecha de realizacion' ,
       confirmButtonColor: '#d33'
     });
   }

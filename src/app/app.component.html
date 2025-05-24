@@ -12,15 +12,14 @@
       <!-- Botones si NO está logeado -->
       <ng-container *ngIf="!isSignedIn">
         <button mat-raised-button color="accent" routerLink="/login">Login</button>
-        <button mat-raised-button color="accent" routerLink="/register">Register</button>
+        <!--<button mat-raised-button color="accent" routerLink="/register">Register</button>-->
       </ng-container>
   
       <!-- Botones si SÍ está logeado -->
       <ng-container *ngIf="isSignedIn">
-        <button mat-button routerLink="/profile">PERFIL</button>
-        <button mat-button routerLink="/users">USUARIOS</button>
+        <button mat-button routerLink="/users" *ngIf="isEncargadoOrSupervisor">USUARIOS</button>
         <button mat-button routerLink="/ver-ordenes">VER ÓRDENES</button>
-        <button mat-button routerLink="/crear-orden">CREAR ÓRDENES</button>
+        <button mat-button routerLink="/crear-orden" *ngIf="isEncargadoOrSupervisor">CREAR ÓRDENES</button>
       </ng-container>
       <!-- Imagen de perfil en la barra de navegación -->
       <div class="avatar-wrapper" *ngIf="isSignedIn && user?.profile_image_url" (click)="goToProfile()">

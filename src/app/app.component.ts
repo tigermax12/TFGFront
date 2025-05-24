@@ -12,6 +12,7 @@ export class AppComponent implements OnInit {
   title = 'My Angular App';
   isSignedIn!: boolean;
   user: any = null;
+  isEncargadoOrSupervisor: boolean = false;
   constructor(
     private auth: AuthStateService,
     public router: Router,
@@ -25,6 +26,9 @@ export class AppComponent implements OnInit {
       // Si el usuario está autenticado, traemos su perfil
       this.authService.profileUser().subscribe((data) => {
         this.user = data;
+      // Verificar el rol
+        const role = this.user?.rol?.toLowerCase();
+        this.isEncargadoOrSupervisor = role === 'encargado' || role === 'supervisor';
       });
     }
   });

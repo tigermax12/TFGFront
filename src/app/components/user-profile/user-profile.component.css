@@ -8,7 +8,6 @@
   background-color: #fff;
 }
 
-/* Imagen de perfil centrada y destacada */
 .profile-image-container {
   display: flex;
   justify-content: center;
@@ -24,7 +23,6 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Título centrado con buen tamaño y margen */
 .card-title {
   font-size: 28px;
   font-weight: bold;
@@ -32,7 +30,6 @@
   text-align: center;
 }
 
-/* Contenido con mayor espacio entre elementos */
 mat-card-content {
   display: flex;
   flex-direction: column;
@@ -45,9 +42,9 @@ mat-card-content p {
   color: #333;
 }
 
-/* Acción centrada */
 .card-actions {
   display: flex;
   justify-content: center;
   margin-top: 24px;
+  gap: 16px; /* Espacio entre botones */
 }

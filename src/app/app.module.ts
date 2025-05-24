@@ -31,6 +31,9 @@ import { MatDateFormats } from '@angular/material/core';
 import { MatNativeDateModule } from '@angular/material/core';
 import { InformeOrdenComponent } from './ordenes/informe-orden/informe-orden.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ChangePasswordDialogComponent } from './components/change-password-dialog/change-password-dialog.component';
 
 const MY_DATE_FORMATS: MatDateFormats = {
   parse: {
@@ -53,7 +56,9 @@ const MY_DATE_FORMATS: MatDateFormats = {
     CrearOrdenComponent,
     VerOrdenComponent,
     ListarUsersComponent,
-    InformeOrdenComponent
+    InformeOrdenComponent,
+    ConfirmDialogComponent,
+    ChangePasswordDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -77,6 +82,7 @@ const MY_DATE_FORMATS: MatDateFormats = {
     MatDatepickerModule,
     MatNativeDateModule,
     MatDialogModule,
+    MatSnackBarModule,
   ],
   providers: [
     {

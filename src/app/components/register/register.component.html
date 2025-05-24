@@ -5,7 +5,7 @@
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Nombre</mat-label>
       <input matInput placeholder="Introduce tu nombre" formControlName="name">
-      <mat-error *ngIf="errors?.nombre">{{ errors.nombre }}</mat-error>
+      <mat-error *ngIf="errors?.name">{{ errors.name?.[0] }}</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
@@ -14,19 +14,25 @@
         <mat-option value="operario">Operario</mat-option>
         <mat-option *ngIf="currentUserRole === 'supervisor'" value="encargado">Encargado</mat-option>
       </mat-select>
-      <mat-error *ngIf="errors?.rol">{{ errors.rol }}</mat-error>
+      <mat-error *ngIf="errors?.rol">{{ errors.rol?.[0] }}</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Email</mat-label>
       <input matInput type="email" placeholder="correo@ejemplo.com" formControlName="email">
-      <mat-error *ngIf="errors?.email">{{ errors.email }}</mat-error>
+      <mat-error *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')">
+        El email es obligatorio.
+      </mat-error>
+      <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+        El formato del email no es válido.
+      </mat-error>
+      <mat-error *ngIf="errors?.email">{{ errors.email?.[0] }}</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Número de Trabajador</mat-label>
       <input matInput placeholder="Ej: 10294" formControlName="numero_trabajador">
-      <mat-error *ngIf="errors?.numero_trabajador">{{ errors.numero_trabajador }}</mat-error>
+      <mat-error *ngIf="errors?.numero_trabajador">{{ errors.numero_trabajador?.[0] }}</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
@@ -35,7 +41,8 @@
       <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
         <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
-      <mat-error *ngIf="errors?.password">{{ errors.password }}</mat-error>
+      <mat-error *ngIf="errors?.password">{{ errors.password?.[0] }}</mat-error>
+      <mat-hint>La contraseña debe tener al menos 6 caracteres.</mat-hint>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
@@ -44,7 +51,7 @@
       <button mat-icon-button matSuffix type="button" (click)="hideConfirm = !hideConfirm">
         <mat-icon>{{ hideConfirm ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
-      <mat-error *ngIf="errors?.c_password">{{ errors.c_password }}</mat-error>
+      <mat-error *ngIf="errors?.c_password">{{ errors.c_password?.[0] }}</mat-error>
     </mat-form-field>
     
     <button mat-raised-button color="primary" type="button" (click)="fileInput.click()">Subir Imagen</button>
