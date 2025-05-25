@@ -12,12 +12,15 @@ export class CrearOrdenComponent {
   ordenForm: FormGroup;
   tipoSeleccionado = '';
   prioridades = [1, 2, 3, 4, 5];
+  
   constructor(private fb: FormBuilder, private ordenService: OrdenService, private router: Router) {
+    const user = JSON.parse(localStorage.getItem('user')!);
+    const userId = user.id;
     this.ordenForm = this.fb.group({
       tipoDeOrden: ['', Validators.required],
       prioridad: [null, Validators.required],
       fecha_de_realizacion: [null],
-      idUserCreador: [1],
+      idUserCreador: [userId],
       camposTipoOrden: this.fb.group({})
     });
   }

@@ -29,19 +29,18 @@ export class LoginComponent implements OnInit {
   }
   ngOnInit() {}
   onSubmit() {
+     this.errors = null;
     this.authService.login(this.loginForm.value).subscribe(
-      (result) => {
-        this.responseHandler(result);
-      },
-      (error) => {
-        this.errors = error.error;
-      },
-      () => {
-        this.authState.setAuthState(true);
-        this.loginForm.reset();
-        this.router.navigate(['/profile']);
-      }
-    );
+    (result) => {
+      this.responseHandler(result);
+      this.authState.setAuthState(true);
+      this.loginForm.reset();
+      this.router.navigate(['/profile']);
+    },
+    (error) => {
+      this.errors = error.error;
+    }
+  );
   }
   // Handle response
   responseHandler(data: any) {
