@@ -18,8 +18,8 @@ export class User {
   providedIn: 'root'
 })
 export class AuthService {
-  apiUrl= 'http://98.66.136.54/api/api/';
-  //apiUrl = 'http://127.0.0.1:8000/api/';
+  //apiUrl= 'http://98.66.136.54/api/api/';
+  apiUrl = 'http://127.0.0.1:8000/api/';
   constructor(
     private http: HttpClient,
     private authState: AuthStateService,

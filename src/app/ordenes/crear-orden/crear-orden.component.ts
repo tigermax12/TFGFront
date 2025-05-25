@@ -53,40 +53,49 @@ export class CrearOrdenComponent {
   }
 
   submit() {
-    const formValue = { ...this.ordenForm.value };
-  
-    // Formatear fecha
-    if (formValue.fecha_de_realizacion instanceof Date) {
-      const date = formValue.fecha_de_realizacion;
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      formValue.fecha_de_realizacion = `${year}/${month}/${day}`;
+  const formValue = { ...this.ordenForm.value };
+
+  // Formatear fecha
+  if (formValue.fecha_de_realizacion instanceof Date) {
+    const date = formValue.fecha_de_realizacion;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    formValue.fecha_de_realizacion = `${year}/${month}/${day}`;
+  }
+
+  formValue.estado = 'pendiente';
+
+  this.ordenService.crearOrden(formValue).subscribe({
+    next: () => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'Orden creada con éxito',
+        confirmButtonColor: '#3085d6'
+      }).then(() => {
+        this.router.navigate(['/ver-ordenes']);
+      });
+    },
+    error: err => {
+      if (err.status === 422 && err.error?.errors) {
+        const mensajes = Object.values(err.error.errors).flat().join('\n');
+        Swal.fire({
+          icon: 'error',
+          title: 'Errores de validación',
+          text: mensajes,
+          confirmButtonColor: '#d33'
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al crear la orden. Por favor, inténtalo de nuevo.',
+          confirmButtonColor: '#d33'
+        });
+      }
     }
-  
-    formValue.estado = 'pendiente';
-  
-    this.ordenService.crearOrden(formValue).subscribe({
-  next: () => {
-    Swal.fire({
-      icon: 'success',
-      title: 'Éxito',
-      text: 'Orden creada con éxito',
-      confirmButtonColor: '#3085d6'
-    }).then(() => {
-      this.router.navigate(['/ver-ordenes']);
-    });
-  },
-  error: err => {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'Error al crear la orden: Debes rellenos los campos Tipo de orden, Priodad y Fecha de realizacion' ,
-      confirmButtonColor: '#d33'
-    });
-  }
-});
-  }
-  
-  
+  }); // <- cierre de subscribe
+
+} // <- cierre de submit()
 }

@@ -4,10 +4,10 @@ providedIn: 'root',
 })
 export class TokenService {
 private issuer = {
-  login:  'http://98.66.136.54/api/api/login',
-  //login: 'http://127.0.0.1:8000/api/login',
-  register: 'http://98.66.136.54/api/api/register',
-  //register: 'http://127.0.0.1:8000/api/register',
+  //login:  'http://98.66.136.54/api/api/login',
+  login: 'http://127.0.0.1:8000/api/login',
+  //register: 'http://98.66.136.54/api/api/register',
+  register: 'http://127.0.0.1:8000/api/register',
   
 };
 constructor() {}

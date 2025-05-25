@@ -7,8 +7,8 @@ import { OrdenDeTrabajo } from '../ordenes/orden.model';
 @Injectable({ providedIn: 'root' })
 
 export class OrdenService {
-  apiUrl = 'http://98.66.136.54/api/api/ordendetrabajo';
-  //apiUrl = 'http://127.0.0.1:8000/api/ordendetrabajo';
+  //apiUrl = 'http://98.66.136.54/api/api/ordendetrabajo';
+  apiUrl = 'http://127.0.0.1:8000/api/ordendetrabajo';
 
   constructor(private http: HttpClient) {}
 
